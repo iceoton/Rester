@@ -3,6 +3,26 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Holo.Light">
         <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Rester</item>
+
+    </style>
+
+    <!-- Theme no Action Bar -->
+    <style name="NoActionBar" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="ActionBar.Solid.Rester" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
+        <item name="android:background">@drawable/ab_solid_vocab</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:titleTextStyle">@style/text_white_bold</item>
+    </style>
+    <style name="text_white_bold" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/text_color_white</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>
