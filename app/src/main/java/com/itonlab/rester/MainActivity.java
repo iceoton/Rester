@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.itonlab.rester.adapter.NavDrawerListAdapter;
 import com.itonlab.rester.model.NavDrawerItem;
+import com.itonlab.rester.util.FileManager;
 
 import java.util.ArrayList;
 
@@ -43,6 +44,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FileManager fileManager = new FileManager(MainActivity.this);
+        if(!fileManager.isExistInInternal(FileManager.DATABASE_SUBDIR, "rester.db")){
+            //copy rester.db to database folder
+            fileManager.copyAssetsFileToInternal("rester.db", FileManager.DATABASE_SUBDIR);
+        }
 
 
         mTitle = mDrawerTitle = getTitle();
@@ -157,7 +164,7 @@ public class MainActivity extends Activity {
                 fragment = new HomeFragment();
                 break;
             case 1:
-                fragment = new HomeFragment();
+                fragment = new MenuFragment();
                 break;
             case 2:
                 fragment = new HomeFragment();
