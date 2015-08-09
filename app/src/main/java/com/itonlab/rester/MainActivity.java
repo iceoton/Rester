@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.itonlab.rester.adapter.NavDrawerListAdapter;
 import com.itonlab.rester.model.NavDrawerItem;
+import com.itonlab.rester.ui.HomeFragment;
+import com.itonlab.rester.ui.MenuFragment;
 import com.itonlab.rester.util.FileManager;
 
 import java.util.ArrayList;

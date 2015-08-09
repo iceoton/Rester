@@ -1,6 +1,8 @@
 package com.itonlab.rester.util;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import java.io.File;
@@ -70,6 +72,25 @@ public class FileManager {
             ioex.printStackTrace();
         }
 
+    }
+
+    public Drawable getDrawableFromAsset(String assetPath)
+    {
+        AssetManager assetManager = mContext.getAssets();
+        // To load image
+        InputStream inputStream = null;
+        try {
+            // get input stream
+            inputStream = assetManager.open(assetPath);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        // create drawable from stream
+        Drawable drawable = Drawable.createFromStream(inputStream, null);
+
+        return drawable;
     }
 
 }

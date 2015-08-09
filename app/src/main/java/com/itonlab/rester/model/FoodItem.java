@@ -1,5 +1,6 @@
 package com.itonlab.rester.model;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 
 public class FoodItem {

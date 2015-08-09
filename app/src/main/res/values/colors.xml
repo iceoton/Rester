@@ -7,6 +7,8 @@
     <color name="counter_text_color">#c5c4c4</color>
     <color name="red">#ffe04b3f</color>
     <color name="red_shadow">#ffce281e</color>
+    <color name="sky_light">#ff6ac0fa</color>
+    <color name="sky">#ff24a9e3</color>
     <color name="blue">#ff3377db</color>
     <color name="blue_shadow">#ff25569e</color>
     <color name="yellow">#fffde338</color>

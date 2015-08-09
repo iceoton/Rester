@@ -1,7 +1,6 @@
 package com.itonlab.rester.adapter;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +11,7 @@ import android.widget.TextView;
 
 import com.itonlab.rester.R;
 import com.itonlab.rester.model.FoodItem;
-
-import java.io.IOException;
-import java.io.InputStream;
+import com.itonlab.rester.util.FileManager;
 import java.util.ArrayList;
 
 public class FoodListAdapter extends BaseAdapter {
@@ -54,28 +51,11 @@ public class FoodListAdapter extends BaseAdapter {
         TextView tvPrice = (TextView)convertView.findViewById(R.id.tvPrice);
         tvPrice.setText(Double.toString(foodItem.getPrice()));
         ImageView ivImgFood = (ImageView)convertView.findViewById(R.id.ivImgFood);
-        Drawable drawable = getDrawableFromAsset(foodItem.getImgPath());
+        FileManager fileManager = new FileManager(mContext);
+        Drawable drawable = fileManager.getDrawableFromAsset(foodItem.getImgPath());
         ivImgFood.setImageDrawable(drawable);
 
         return convertView;
     }
 
-    private Drawable getDrawableFromAsset(String assetPath)
-    {
-        AssetManager assetManager = mContext.getAssets();
-        // To load image
-        InputStream inputStream = null;
-        try {
-            // get input stream
-            inputStream = assetManager.open(assetPath);
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
-
-        // create drawable from stream
-        Drawable drawable = Drawable.createFromStream(inputStream, null);
-
-        return drawable;
-    }
 }
