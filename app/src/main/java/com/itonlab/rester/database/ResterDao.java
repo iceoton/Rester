@@ -55,12 +55,42 @@ public class ResterDao {
     }
 
     public void addToPreOrder(PreOrderItem preOrderItem){
-        ContentValues values = preOrderItem.toContentValues();
-        long insertIndex = database.insert(PreOrderTable.TABLE_NAME, null, values);
-        if (insertIndex == -1) {
-            Log.d(TAG, "An error occurred on inserting pre_order table.");
+        PreOrderItem olePreOrderItem = getPreOrderItemWithMenuID(preOrderItem.getMenuId());
+        if(olePreOrderItem == null) {
+            ContentValues values = preOrderItem.toContentValues();
+            long insertIndex = database.insert(PreOrderTable.TABLE_NAME, null, values);
+            if (insertIndex == -1) {
+                Log.d(TAG, "An error occurred on inserting pre_order table.");
+            } else {
+                Log.d(TAG, "insert pre-order successful.");
+            }
         } else {
-            Log.d(TAG, "insert pre-order successful.");
+            int newAmount = olePreOrderItem.getAmount() + preOrderItem.getAmount();
+            updateAmountPreOrder(preOrderItem.getMenuId(), newAmount);
+        }
+    }
+
+    private PreOrderItem getPreOrderItemWithMenuID(int menuID){
+        PreOrderItem preOrderItem = null;
+        String sql = "SELECT * FROM pre_order WHERE menu_id = ?";
+        String[] whereArgs = {String.valueOf(menuID)};
+        Cursor cursor = database.rawQuery(sql, whereArgs);
+        if(cursor.getCount() > 0){
+            cursor.moveToFirst();
+            preOrderItem = PreOrderItem.newInstance(cursor);
+        }
+
+        return preOrderItem;
+    }
+
+    public void updateAmountPreOrder(int menuID, int amountToUpdate){
+        ContentValues values = new ContentValues();
+        values.put(PreOrderTable.Columns._AMOUNT, amountToUpdate);
+        String[] whereArgs = {String.valueOf(menuID)};
+
+        int affected = database.update(PreOrderTable.TABLE_NAME, values, "menu_id=?", whereArgs);
+        if(affected == 0){
+            Log.d(TAG,"[PreOrder]update amount menu id " + menuID + " not successful.");
         }
     }
 
@@ -83,6 +113,10 @@ public class ResterDao {
         Log.d(TAG, "Number of item in pre_order: " + preOrderItems.size());
 
         return preOrderItems;
+    }
+
+    public void clearPreOrder(){
+        database.delete(PreOrderTable.TABLE_NAME, null, null);
     }
 
     public ArrayList<SummaryItem> getSummaryOrder(){

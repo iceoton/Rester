@@ -2,6 +2,8 @@ package com.itonlab.rester.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,6 +18,8 @@ public class SummaryActivity extends Activity{
     ArrayList<SummaryItem> summaryItems;
     ResterDao databaseDao;
 
+    private Button btnConfirm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,11 +29,14 @@ public class SummaryActivity extends Activity{
         databaseDao.open();
 
         summaryItems = databaseDao.getSummaryOrder();
-        ListView lvSummmary = (ListView)findViewById(R.id.lvOrderList);
+        ListView lvSummmary = (ListView)findViewById(R.id.lvBillList);
         SummaryListAdapter summaryListAdapter = new SummaryListAdapter(SummaryActivity.this, summaryItems);
         lvSummmary.setAdapter(summaryListAdapter);
         TextView tvTotalPrice = (TextView)findViewById(R.id.tvTotalPrice);
         tvTotalPrice.setText(String.valueOf(findTotalPrice()));
+
+        btnConfirm = (Button)findViewById(R.id.btnConfirm);
+        btnConfirm.setOnClickListener(confirmOnItemClickListener);
 
     }
 
@@ -52,5 +59,20 @@ public class SummaryActivity extends Activity{
         }
 
         return totalPrice;
+    }
+
+    View.OnClickListener confirmOnItemClickListener = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View v) {
+
+
+            databaseDao.clearPreOrder();
+        }
+    };
+
+    private void sendOrderToMaster(){
+
+
     }
 }

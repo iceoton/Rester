@@ -12,7 +12,7 @@
         android:textSize="16sp" />
 
     <ListView
-        android:id="@+id/lvOrderList"
+        android:id="@+id/lvBillList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"

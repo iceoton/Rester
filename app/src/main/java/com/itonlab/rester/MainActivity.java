@@ -20,6 +20,7 @@ import com.itonlab.rester.adapter.NavDrawerListAdapter;
 import com.itonlab.rester.model.NavDrawerItem;
 import com.itonlab.rester.ui.HomeFragment;
 import com.itonlab.rester.ui.MenuFragment;
+import com.itonlab.rester.ui.SettingsFragment;
 import com.itonlab.rester.util.FileManager;
 
 import java.util.ArrayList;
@@ -125,6 +126,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        //return false it will not be shown.
         return false;
     }
 
@@ -172,7 +174,7 @@ public class MainActivity extends Activity {
                 fragment = new HomeFragment();
                 break;
             case 3:
-                fragment = new HomeFragment();
+                fragment = new SettingsFragment();
                 break;
             default:
                 break;

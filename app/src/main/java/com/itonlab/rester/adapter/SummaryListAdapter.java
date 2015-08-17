@@ -40,16 +40,16 @@ public class SummaryListAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null){
-            convertView = inflater.inflate(R.layout.order_list_item, parent, false);
+            convertView = inflater.inflate(R.layout.bill_list_item, parent, false);
         }
 
         SummaryItem summaryItem = summaryItems.get(position);
         TextView tvName = (TextView)convertView.findViewById(R.id.tvName);
         tvName.setText(summaryItem.getName());
-        TextView tvPrice = (TextView)convertView.findViewById(R.id.tvPrice);
-        tvPrice.setText(Double.toString(summaryItem.getPrice()));
         TextView tvNumber = (TextView)convertView.findViewById(R.id.tvNumber);
         tvNumber.setText(summaryItem.getAmount()+ "x");
+        TextView tvPrice = (TextView)convertView.findViewById(R.id.tvPrice);
+        tvPrice.setText(Double.toString(summaryItem.getPrice()));
         TextView tvTotalPrice = (TextView)convertView.findViewById(R.id.tvTotalPrice);
         double totalPrice = summaryItem.getPrice() * summaryItem.getAmount();
         tvTotalPrice.setText(Double.toString(totalPrice));
