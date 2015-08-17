@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
+import com.itonlab.rester.util.AppPreference;
 
 import java.util.ArrayList;
 
@@ -24,7 +25,7 @@ public class SettingsFragment extends Fragment{
     private SimpleTCPServer server;
 
     private TextView textViewIP, textViewStatus;
-    private EditText editTextMessage, editTextIP;
+    private EditText editTextMessage, editTextIP, editTextName;
     private Button buttonSend;
     private ListView listViewChat;
 
@@ -55,6 +56,8 @@ public class SettingsFragment extends Fragment{
         textViewIP.setText(TCPUtils.getIP(getActivity()));
 
         editTextMessage = (EditText) rootView.findViewById(R.id.editTextMessage);
+
+        editTextName = (EditText) rootView.findViewById(R.id.etYourName);
 
         editTextIP = (EditText) rootView.findViewById(R.id.editTextIP);
         TCPUtils.forceInputIP(editTextIP);
@@ -95,12 +98,32 @@ public class SettingsFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+        loadSettingsValue();
         server.start();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        saveSettingsValue();
         server.stop();
+
+    }
+
+    private void saveSettingsValue(){
+        String yourName = editTextName.getText().toString().trim();
+        String masterIP = editTextIP.getText().toString().trim();
+
+        AppPreference appPreference = new AppPreference(getActivity());
+        appPreference.saveYourName(yourName);
+        appPreference.saveMasterIP(masterIP);
+    }
+
+    private void loadSettingsValue(){
+        AppPreference appPreference = new AppPreference(getActivity());
+        String yourName = appPreference.getYourName();
+        editTextName.setText(yourName);
+        String masterIP = appPreference.getMasterIP();
+        editTextIP.setText(masterIP);
     }
 }

@@ -75,8 +75,6 @@ public class MenuFragment extends Fragment {
             FileManager fileManager = new FileManager(getActivity());
             Drawable drawable = fileManager.getDrawableFromAsset(foodItem.getImgPath());
             ivImgFood.setImageDrawable(drawable);
-            EditText etAmount = (EditText)dialogFoodDetail.findViewById(R.id.etAmount);
-            int amount = Integer.parseInt(etAmount.getText().toString());
             dialogFoodDetail.show();
 
             Button btnCancel = (Button)dialogFoodDetail.findViewById(R.id.btnCancel);
@@ -90,12 +88,14 @@ public class MenuFragment extends Fragment {
 
             final PreOrderItem preOrderItem = new PreOrderItem();
             preOrderItem.setMenuId(foodItem.getId());
-            preOrderItem.setAmount(amount);
+            final EditText etAmount = (EditText)dialogFoodDetail.findViewById(R.id.etAmount);
             Button btnOK= (Button)dialogFoodDetail.findViewById(R.id.btnOK);
             btnOK.setOnClickListener(new View.OnClickListener(){
 
                 @Override
                 public void onClick(View v) {
+                    int amount = Integer.parseInt(etAmount.getText().toString());
+                    preOrderItem.setAmount(amount);
                     databaseDao.addToPreOrder(preOrderItem);
                     dialogFoodDetail.dismiss();
                 }
