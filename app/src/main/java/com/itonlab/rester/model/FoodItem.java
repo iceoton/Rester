@@ -50,4 +50,24 @@ public class FoodItem {
     public String getImgPath() {
         return imgPath;
     }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public void setNameThai(String nameThai) {
+        this.nameThai = nameThai;
+    }
+
+    public void setNameEng(String nameEng) {
+        this.nameEng = nameEng;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
 }

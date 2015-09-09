@@ -25,6 +25,14 @@
         <activity
             android:name=".ui.SummaryActivity"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.ShowDatabaseActivity"
+            android:label="@string/activity_edit_database"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".ui.EditDatabaseActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

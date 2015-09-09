@@ -8,6 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.itonlab.rester.model.FoodItem;
+import com.itonlab.rester.model.FoodOrder;
+import com.itonlab.rester.model.FoodOrderItem;
+import com.itonlab.rester.model.MenuTable;
+import com.itonlab.rester.model.OrderItemTable;
+import com.itonlab.rester.model.OrderTable;
 import com.itonlab.rester.model.PreOrderItem;
 import com.itonlab.rester.model.PreOrderTable;
 import com.itonlab.rester.model.SummaryItem;
@@ -54,6 +59,33 @@ public class ResterDao {
         return  foodItems;
     }
 
+    public FoodItem getMenuAtId(int menuId){
+        FoodItem foodItem = null;
+        String sql = "SELECT * FROM menu WHERE id = ?";
+        String[] selectionArgs = {String.valueOf(menuId)};
+        Cursor cursor = database.rawQuery(sql, selectionArgs);
+
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            foodItem = FoodItem.newInstance(cursor);
+        }
+
+        return foodItem;
+    }
+
+    public void updateMenu(FoodItem foodItem){
+        ContentValues values = new ContentValues();
+        values.put(MenuTable.Columns._NAME_THAI, foodItem.getNameThai());
+        values.put(MenuTable.Columns._PRICE, foodItem.getPrice());
+        String[] whereArgs = {String.valueOf(foodItem.getId())};
+
+        int affected = database.update(MenuTable.TABLE_NAME, values, "id=?", whereArgs);
+        if(affected == 0){
+            Log.d(TAG,"[Menu]update menu id " + foodItem.getId() + " not successful.");
+        }
+
+    }
+
     public void addToPreOrder(PreOrderItem preOrderItem){
         PreOrderItem olePreOrderItem = getPreOrderItemWithMenuID(preOrderItem.getMenuId());
         if(olePreOrderItem == null) {
@@ -90,7 +122,7 @@ public class ResterDao {
 
         int affected = database.update(PreOrderTable.TABLE_NAME, values, "menu_id=?", whereArgs);
         if(affected == 0){
-            Log.d(TAG,"[PreOrder]update amount menu id " + menuID + " not successful.");
+            Log.d(TAG, "[PreOrder]update amount menu id " + menuID + " not successful.");
         }
     }
 
@@ -115,8 +147,71 @@ public class ResterDao {
         return preOrderItems;
     }
 
+    public int addOrder(FoodOrder foodOrder){
+        ContentValues values = foodOrder.toContentValues();
+        long insertIndex = database.insert(OrderTable.TABLE_NAME, null, values);
+        if (insertIndex == -1) {
+            Log.d(TAG, "An error occurred on inserting order table.");
+        } else {
+            Log.d(TAG, "insert order successful.");
+        }
+
+        return (int)insertIndex;
+    }
+
+    public void addOrderItem(FoodOrderItem foodOrderItem){
+        ContentValues values = foodOrderItem.toContentValues();
+        long insertIndex = database.insert(OrderItemTable.TABLE_NAME, null, values);
+        if (insertIndex == -1) {
+            Log.d(TAG, "An error occurred on inserting order_item table.");
+        } else {
+            Log.d(TAG, "insert order_item successful.");
+        }
+    }
+
     public void clearPreOrder(){
+        //Move data to Order table
+        // 1. add order
+        int totalOrderItem = 0;
+        ArrayList<PreOrderItem> preOrderItems = getAllPreOrderItem();
+        for (int i = 0; i < preOrderItems.size();i++){
+            totalOrderItem += preOrderItems.get(i).getAmount();
+        }
+        FoodOrder foodOrder = new FoodOrder();
+        foodOrder.setTotal(totalOrderItem);
+        int orderId = addOrder(foodOrder);
+        // 2. add order item
+        for (PreOrderItem preOrderItem : preOrderItems){
+            FoodOrderItem foodOrderItem = new FoodOrderItem();
+            foodOrderItem.setOrderID(orderId);
+            foodOrderItem.setMenuID(preOrderItem.getMenuId());
+            foodOrderItem.setAmount(preOrderItem.getAmount());
+            addOrderItem(foodOrderItem);
+        }
+
+        //Delete it out of Pre-Order table
         database.delete(PreOrderTable.TABLE_NAME, null, null);
+    }
+
+    public ArrayList<FoodOrder> getAllOrder(){
+        ArrayList<FoodOrder> foodOrders = new ArrayList<FoodOrder>();
+        String sql = "SELECT * FROM 'order'";
+        Cursor cursor = database.rawQuery(sql, null);
+
+        if(cursor.getCount() > 0){
+            FoodOrder foodOrder = null;
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()){
+                foodOrder = foodOrder.newInstance(cursor);
+                foodOrders.add(foodOrder);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+
+        Log.d(TAG, "Number of order: " + foodOrders.size());
+
+        return foodOrders;
     }
 
     public ArrayList<SummaryItem> getSummaryOrder(){
@@ -143,5 +238,7 @@ public class ResterDao {
 
         return summaryItems;
     }
+
+
 
 }

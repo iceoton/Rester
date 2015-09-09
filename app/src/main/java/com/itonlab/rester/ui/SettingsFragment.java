@@ -1,14 +1,14 @@
 package com.itonlab.rester.ui;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
@@ -16,18 +16,12 @@ import com.itonlab.rester.util.AppPreference;
 
 import java.util.ArrayList;
 
-import app.akexorcist.simpletcplibrary.SimpleTCPClient;
-import app.akexorcist.simpletcplibrary.SimpleTCPServer;
 import app.akexorcist.simpletcplibrary.TCPUtils;
 
 public class SettingsFragment extends Fragment{
-    public final int TCP_PORT = 21111;
-    private SimpleTCPServer server;
-
-    private TextView textViewIP, textViewStatus;
-    private EditText editTextMessage, editTextIP, editTextName;
-    private Button buttonSend;
-    private ListView listViewChat;
+    private TextView textViewIP;
+    private EditText editTextIP, editTextName;
+    private LinearLayout layoutEditDatabase;
 
     private ArrayList<String> data;
     private ArrayAdapter<String> adapter;
@@ -37,60 +31,16 @@ public class SettingsFragment extends Fragment{
 
         View rootView = inflater.inflate(R.layout.fragment_settings,container, false);
 
-        server = new SimpleTCPServer(TCP_PORT);
-        server.setOnDataReceivedListener(new SimpleTCPServer.OnDataReceivedListener() {
-            public void onDataReceived(String message, String ip) {
-                data.add(message);
-                adapter.notifyDataSetChanged();
-                listViewChat.post(new Runnable() {
-                    public void run() {
-                        listViewChat.smoothScrollToPosition(listViewChat.getCount() - 1);
-                    }
-                });
-            }
-        });
-
-        textViewStatus = (TextView) rootView.findViewById(R.id.textViewStatus);
-
         textViewIP = (TextView) rootView.findViewById(R.id.textViewIP);
         textViewIP.setText(TCPUtils.getIP(getActivity()));
-
-        editTextMessage = (EditText) rootView.findViewById(R.id.editTextMessage);
 
         editTextName = (EditText) rootView.findViewById(R.id.etYourName);
 
         editTextIP = (EditText) rootView.findViewById(R.id.editTextIP);
         TCPUtils.forceInputIP(editTextIP);
 
-        buttonSend = (Button) rootView.findViewById(R.id.buttonSend);
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (editTextMessage.getText().length() > 0) {
-                    String message = editTextMessage.getText().toString();
-                    String ip = editTextIP.getText().toString();
-
-                    SimpleTCPClient.send(message, ip, TCP_PORT, new SimpleTCPClient.SendCallback() {
-                        public void onSuccess(String tag) {
-                            textViewStatus.setText("Status : Sent");
-                        }
-
-                        public void onFailed(String tag) {
-                            textViewStatus.setText("Status : Failed");
-                        }
-                    }, "TAG");
-
-                    editTextMessage.setText("");
-                    textViewStatus.setText("Status : Sending...");
-                }
-            }
-        });
-
-        data = new ArrayList<String>();
-        adapter = new ArrayAdapter<String>(getActivity()
-                , android.R.layout.simple_list_item_1, data);
-
-        listViewChat = (ListView) rootView.findViewById(R.id.listViewChat);
-        listViewChat.setAdapter(adapter);
+        layoutEditDatabase = (LinearLayout)rootView.findViewById(R.id.layoutEditDatabase);
+        layoutEditDatabase.setOnClickListener(layoutEditDatabaseListener);
 
         return rootView;
     }
@@ -99,14 +49,12 @@ public class SettingsFragment extends Fragment{
     public void onResume() {
         super.onResume();
         loadSettingsValue();
-        server.start();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         saveSettingsValue();
-        server.stop();
 
     }
 
@@ -126,4 +74,13 @@ public class SettingsFragment extends Fragment{
         String masterIP = appPreference.getMasterIP();
         editTextIP.setText(masterIP);
     }
+
+    View.OnClickListener layoutEditDatabaseListener = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getActivity(), ShowDatabaseActivity.class);
+            getActivity().startActivity(intent);
+        }
+    };
 }

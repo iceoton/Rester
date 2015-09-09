@@ -34,4 +34,8 @@
         <item name="android:windowSoftInputMode">stateUnspecified|adjustPan</item>
     </style>
 
+    <style name="DatabaseRowItem" parent="android:TextAppearance.Holo.Widget.TextView">
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

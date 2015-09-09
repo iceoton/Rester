@@ -3,6 +3,7 @@ package com.itonlab.rester;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -18,9 +19,10 @@ import android.widget.Toast;
 
 import com.itonlab.rester.adapter.NavDrawerListAdapter;
 import com.itonlab.rester.model.NavDrawerItem;
-import com.itonlab.rester.ui.HomeFragment;
+import com.itonlab.rester.ui.HistoryFragment;
 import com.itonlab.rester.ui.MenuFragment;
 import com.itonlab.rester.ui.SettingsFragment;
+import com.itonlab.rester.ui.SummaryActivity;
 import com.itonlab.rester.util.FileManager;
 
 import java.util.ArrayList;
@@ -67,10 +69,9 @@ public class MainActivity extends Activity {
         navDrawerItems = new ArrayList<NavDrawerItem>();
 
         // adding nav drawer items to array
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], R.drawable.nav_home_icon));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], R.drawable.nav_menu_icon));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], R.drawable.nav_history_icon));
-        navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], R.drawable.nav_settings_icon));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], R.drawable.nav_menu_icon));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], R.drawable.nav_history_icon));
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], R.drawable.nav_settings_icon));
 
         mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
 
@@ -127,7 +128,7 @@ public class MainActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         //return false it will not be shown.
-        return false;
+        return true;
     }
 
     @Override
@@ -139,7 +140,9 @@ public class MainActivity extends Activity {
         }
         // Handle action bar actions click
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_order:
+                Intent intent = new Intent(MainActivity.this, SummaryActivity.class);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -151,9 +154,6 @@ public class MainActivity extends Activity {
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // if nav drawer is opened, hide the action items
-        boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-        menu.findItem(R.id.action_settings).setVisible(!drawerOpen);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -165,15 +165,12 @@ public class MainActivity extends Activity {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new HomeFragment();
-                break;
-            case 1:
                 fragment = new MenuFragment();
                 break;
-            case 2:
-                fragment = new HomeFragment();
+            case 1:
+                fragment = new HistoryFragment();
                 break;
-            case 3:
+            case 2:
                 fragment = new SettingsFragment();
                 break;
             default:

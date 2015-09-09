@@ -3,16 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_splash"
-    android:orientation="vertical"
     android:gravity="center|top"
+    android:orientation="vertical"
     android:padding="8dp">
 
-    <Button
-        android:id="@+id/btnViewOrder"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:background="@drawable/btn_sky"
-        android:textSize="22sp"
-        android:text="View Order"/>
+    <ListView
+        android:id="@+id/listViewOrder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

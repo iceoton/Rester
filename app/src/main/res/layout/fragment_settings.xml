@@ -9,16 +9,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:layout_margin="5dp"
+        android:layout_margin="@dimen/normal_layout_margin"
         android:text="0.0.0.0"
         android:textSize="10sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/dashline"
+        android:layerType="software" />
 
     <LinearLayout
         android:id="@+id/layoutYourName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_gravity="center"
+        android:layout_height="@dimen/setting_fragment_row_height"
+        android:layout_margin="@dimen/normal_layout_margin"
+        android:layout_gravity="left"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -41,12 +47,18 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/dashline"
+        android:layerType="software" />
+
     <LinearLayout
         android:id="@+id/layoutTargetIP"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_gravity="center"
+        android:layout_height="@dimen/setting_fragment_row_height"
+        android:layout_margin="@dimen/normal_layout_margin"
+        android:layout_gravity="left"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -57,6 +69,7 @@
             android:layout_weight="1"
             android:ems="9"
             android:hint="IP Address"
+            android:inputType="number"
             android:text="@string/default_ip_address"
             android:textSize="16sp" />
 
@@ -69,47 +82,39 @@
 
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listViewChat"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_margin="5dp">
-
-    </ListView>
+        android:layout_height="1dp"
+        android:background="@drawable/dashline"
+        android:layerType="software" />
 
     <LinearLayout
-        android:id="@+id/layoutMessage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:id="@+id/layoutEditDatabase"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/setting_fragment_row_height"
+        android:layout_margin="@dimen/normal_layout_margin"
+        android:layout_gravity="left"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:padding="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/ic_edit_database"/>
 
         <TextView
-            android:id="@+id/textViewStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_margin="5dp"
-            android:text="Status : Idle" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <EditText
-                android:id="@+id/editTextMessage"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"/>
-
-            <Button
-                android:id="@+id/buttonSend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="OK" />
-        </LinearLayout>
+            android:text="Edit Database"
+            android:textSize="18sp"/>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/dashline"
+        android:layerType="software" />
 
 </LinearLayout>

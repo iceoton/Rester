@@ -26,14 +26,16 @@ public class JsonFunction {
         try {
             json.put("ip", TCPUtils.getIP(mContext));
             json.put("name", appPreference.getYourName());
-
+            int total = 0;
             JSONArray order = new JSONArray();
             for(PreOrderItem preOrderItem: preOrderItems) {
+                total += preOrderItem.getAmount();
                 JSONObject orderItem = new JSONObject();
                 orderItem.put("id",preOrderItem.getMenuId());
-                orderItem.put("amout", preOrderItem.getAmount());
+                orderItem.put("amount", preOrderItem.getAmount());
                 order.put(orderItem);
             }
+            json.put("total", total);
             json.put("order",order);
 
         } catch (JSONException e) {
