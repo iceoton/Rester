@@ -1,5 +1,6 @@
 package com.itonlab.rester.ui;
 
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -110,8 +112,34 @@ public class SettingsFragment extends Fragment{
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), ShowDatabaseActivity.class);
-            getActivity().startActivity(intent);
+            showDialogPassword();
         }
     };
+
+    private void showDialogPassword(){
+
+        final Dialog dialogLogin = new Dialog(getActivity());
+        dialogLogin.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogLogin.setContentView(R.layout.dialog_login);
+        dialogLogin.setCancelable(true);
+        dialogLogin.show();
+
+        final EditText etPassword  = (EditText) dialogLogin.findViewById(R.id.etPassword);
+        Button btnLogin = (Button) dialogLogin.findViewById(R.id.btnLogin);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AppPreference appPreference = new AppPreference(getActivity());
+                String savePassword = appPreference.getAppPassword();
+                String inputPassword = etPassword.getText().toString().trim();
+                if (inputPassword.equals(savePassword)) {
+                    //Logged in
+                    Intent intent = new Intent(getActivity(), ShowDatabaseActivity.class);
+                    getActivity().startActivity(intent);
+                }
+            }
+        });
+
+
+    }
 }
