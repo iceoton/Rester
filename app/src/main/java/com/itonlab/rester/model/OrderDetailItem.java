@@ -1,6 +1,6 @@
 package com.itonlab.rester.model;
 
-public class SummaryItem {
+public class OrderDetailItem {
     private int menuId;
     private String name;
     private double price;

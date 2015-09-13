@@ -44,4 +44,14 @@ public class AppPreference {
     public String getYourName(){
         return sharedPref.getString("yourName",mContext.getResources().getString(R.string.app_name));
     }
+
+    public void saveAppLanguage(String language){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("appLanguage",language);
+        editor.apply();
+    }
+
+    public String getAppLanguage(){
+        return sharedPref.getString("appLanguage","en");
+    }
 }

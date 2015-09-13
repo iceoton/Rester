@@ -32,6 +32,11 @@ public class FoodOrder {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        if(cursor.getInt(cursor.getColumnIndexOrThrow(OrderTable.Columns._SERVED)) == 1) {
+            this.served = true;
+        } else {
+            this.served = false;
+        }
     }
 
     public ContentValues toContentValues(){
@@ -63,5 +68,13 @@ public class FoodOrder {
 
     public void setOrderTime(Date orderTime) {
         this.orderTime = orderTime;
+    }
+
+    public boolean isServed() {
+        return served;
+    }
+
+    public void setServed(boolean served) {
+        this.served = served;
     }
 }

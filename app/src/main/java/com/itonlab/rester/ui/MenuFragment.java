@@ -3,7 +3,6 @@ package com.itonlab.rester.ui;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,7 +95,7 @@ public class MenuFragment extends Fragment {
                 public void onClick(View v) {
                     int amount = Integer.parseInt(etAmount.getText().toString());
                     preOrderItem.setAmount(amount);
-                    databaseDao.addToPreOrder(preOrderItem);
+                    databaseDao.addPreOrder(preOrderItem);
                     dialogFoodDetail.dismiss();
                 }
             });

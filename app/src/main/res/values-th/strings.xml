@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ร้านเจ๊เบียบ</string>
+    <string name="text_edit_database">แก้ไขข้อมูลอาหาร</string>
+    <string name="action_settings">ตั้งค่า</string>
+    <string name="desc_list_item_icon">ไอคอนไอเท็ม</string>
+    <string name="default_ip_address">192.168.1.1</string>
+    <string name="btn_thai_language">ภาษาไทย</string>
+    <string name="btn_english_language">ภาษาอังกฤษ</string>
+    <string name="text_your_name">ชื่อของเครื่องนี้</string>
+    <string name="text_master_ip_address">IP ของเครื่อง Master</string>
+</resources>

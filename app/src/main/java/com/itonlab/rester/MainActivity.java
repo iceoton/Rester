@@ -23,9 +23,11 @@ import com.itonlab.rester.ui.HistoryFragment;
 import com.itonlab.rester.ui.MenuFragment;
 import com.itonlab.rester.ui.SettingsFragment;
 import com.itonlab.rester.ui.SummaryActivity;
+import com.itonlab.rester.util.AppPreference;
 import com.itonlab.rester.util.FileManager;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class MainActivity extends Activity {
@@ -49,6 +51,17 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AppPreference appPreference = new AppPreference(MainActivity.this);
+        String appLanguage = appPreference.getAppLanguage();
+        Configuration config = new Configuration();
+        if(appLanguage.equals("th")) {
+            config.locale = new Locale("th");
+        } else {
+            config.locale = Locale.ENGLISH;
+
+        }
+        getResources().updateConfiguration(config, null);
 
         FileManager fileManager = new FileManager(MainActivity.this);
         if(!fileManager.isExistInInternal(FileManager.DATABASE_SUBDIR, "rester.db")){

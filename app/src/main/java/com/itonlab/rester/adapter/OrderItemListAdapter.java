@@ -8,27 +8,27 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
-import com.itonlab.rester.model.SummaryItem;
+import com.itonlab.rester.model.OrderDetailItem;
 
 import java.util.ArrayList;
 
-public class SummaryListAdapter extends BaseAdapter{
+public class OrderItemListAdapter extends BaseAdapter{
     Context mContext;
-    ArrayList<SummaryItem> summaryItems;
+    ArrayList<OrderDetailItem> orderDetailItems;
 
-    public SummaryListAdapter(Context mContext, ArrayList<SummaryItem> summaryItems) {
+    public OrderItemListAdapter(Context mContext, ArrayList<OrderDetailItem> orderDetailItems) {
         this.mContext = mContext;
-        this.summaryItems = summaryItems;
+        this.orderDetailItems = orderDetailItems;
     }
 
     @Override
     public int getCount() {
-        return summaryItems.size();
+        return orderDetailItems.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return summaryItems.get(position);
+        return orderDetailItems.get(position);
     }
 
     @Override
@@ -43,15 +43,15 @@ public class SummaryListAdapter extends BaseAdapter{
             convertView = inflater.inflate(R.layout.bill_list_item, parent, false);
         }
 
-        SummaryItem summaryItem = summaryItems.get(position);
+        OrderDetailItem orderDetailItem = orderDetailItems.get(position);
         TextView tvName = (TextView)convertView.findViewById(R.id.tvName);
-        tvName.setText(summaryItem.getName());
+        tvName.setText(orderDetailItem.getName());
         TextView tvNumber = (TextView)convertView.findViewById(R.id.tvNumber);
-        tvNumber.setText(summaryItem.getAmount()+ "x");
+        tvNumber.setText(orderDetailItem.getAmount()+ "x");
         TextView tvPrice = (TextView)convertView.findViewById(R.id.tvPrice);
-        tvPrice.setText(Double.toString(summaryItem.getPrice()));
+        tvPrice.setText(Double.toString(orderDetailItem.getPrice()));
         TextView tvTotalPrice = (TextView)convertView.findViewById(R.id.tvTotalPrice);
-        double totalPrice = summaryItem.getPrice() * summaryItem.getAmount();
+        double totalPrice = orderDetailItem.getPrice() * orderDetailItem.getAmount();
         tvTotalPrice.setText(Double.toString(totalPrice));
 
         return convertView;

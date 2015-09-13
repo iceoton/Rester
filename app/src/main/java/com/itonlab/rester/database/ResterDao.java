@@ -15,7 +15,7 @@ import com.itonlab.rester.model.OrderItemTable;
 import com.itonlab.rester.model.OrderTable;
 import com.itonlab.rester.model.PreOrderItem;
 import com.itonlab.rester.model.PreOrderTable;
-import com.itonlab.rester.model.SummaryItem;
+import com.itonlab.rester.model.OrderDetailItem;
 
 import java.util.ArrayList;
 
@@ -86,7 +86,7 @@ public class ResterDao {
 
     }
 
-    public void addToPreOrder(PreOrderItem preOrderItem){
+    public void addPreOrder(PreOrderItem preOrderItem){
         PreOrderItem olePreOrderItem = getPreOrderItemWithMenuID(preOrderItem.getMenuId());
         if(olePreOrderItem == null) {
             ContentValues values = preOrderItem.toContentValues();
@@ -214,29 +214,57 @@ public class ResterDao {
         return foodOrders;
     }
 
-    public ArrayList<SummaryItem> getSummaryOrder(){
-        ArrayList<SummaryItem> summaryItems = new ArrayList<SummaryItem>();
-        String sql = "SELECT menu_id, name_th, price, amount FROM pre_order INNER JOIN menu ON menu_id = menu.id";
-        Cursor cursor = database.rawQuery(sql,null);
+    public ArrayList<OrderDetailItem> getOrderDetail(int orderId){
+        ArrayList<OrderDetailItem> orderDetailItems = new ArrayList<OrderDetailItem>();
+        String sql = "SELECT menu_id, name_th, price, amount" +
+                " FROM order_item INNER JOIN menu ON menu_id = menu.id"
+                +" WHERE order_id = ?";
+        String[] whereArgs = {String.valueOf(orderId)};
+        Cursor cursor = database.rawQuery(sql,whereArgs);
 
         if(cursor.getCount() > 0){
-            SummaryItem summaryItem = null;
+            OrderDetailItem orderDetailItem = null;
             cursor.moveToFirst();
             while (!cursor.isAfterLast()){
-                summaryItem = new SummaryItem();
-                summaryItem.setMenuId(cursor.getInt(0));
-                summaryItem.setName(cursor.getString(1));
-                summaryItem.setPrice(cursor.getDouble(2));
-                summaryItem.setAmount(cursor.getInt(3));
-                summaryItems.add(summaryItem);
+                orderDetailItem = new OrderDetailItem();
+                orderDetailItem.setMenuId(cursor.getInt(0));
+                orderDetailItem.setName(cursor.getString(1));
+                orderDetailItem.setPrice(cursor.getDouble(2));
+                orderDetailItem.setAmount(cursor.getInt(3));
+                orderDetailItems.add(orderDetailItem);
                 cursor.moveToNext();
             }
         }
         cursor.close();
 
-        Log.d(TAG, "Number of item in summary: " + summaryItems.size());
+        Log.d(TAG, "Number of item in order: " + orderDetailItems.size());
 
-        return summaryItems;
+        return orderDetailItems;
+    }
+
+    public ArrayList<OrderDetailItem> getSummaryOrder(){
+        ArrayList<OrderDetailItem> orderDetailItems = new ArrayList<OrderDetailItem>();
+        String sql = "SELECT menu_id, name_th, price, amount FROM pre_order INNER JOIN menu ON menu_id = menu.id";
+        Cursor cursor = database.rawQuery(sql,null);
+
+        if(cursor.getCount() > 0){
+            OrderDetailItem orderDetailItem = null;
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()){
+                orderDetailItem = new OrderDetailItem();
+                orderDetailItem.setMenuId(cursor.getInt(0));
+                orderDetailItem.setName(cursor.getString(1));
+                orderDetailItem.setPrice(cursor.getDouble(2));
+                orderDetailItem.setAmount(cursor.getInt(3));
+                orderDetailItems.add(orderDetailItem);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+
+        Log.d(TAG, "Number of item in summary: " + orderDetailItems.size());
+
+        return orderDetailItems;
     }
 
 

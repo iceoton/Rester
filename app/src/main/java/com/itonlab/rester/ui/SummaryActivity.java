@@ -11,10 +11,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
-import com.itonlab.rester.adapter.SummaryListAdapter;
+import com.itonlab.rester.adapter.OrderItemListAdapter;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.PreOrderItem;
-import com.itonlab.rester.model.SummaryItem;
+import com.itonlab.rester.model.OrderDetailItem;
 import com.itonlab.rester.util.AppPreference;
 import com.itonlab.rester.util.JsonFunction;
 
@@ -26,7 +26,7 @@ import app.akexorcist.simpletcplibrary.SimpleTCPServer;
 public class SummaryActivity extends Activity{
     public final int TCP_PORT = 21111;
     private SimpleTCPServer server;
-    ArrayList<SummaryItem> summaryItems;
+    ArrayList<OrderDetailItem> orderDetailItems;
     ResterDao databaseDao;
 
     private Button btnConfirm;
@@ -39,15 +39,15 @@ public class SummaryActivity extends Activity{
         databaseDao = new ResterDao(SummaryActivity.this);
         databaseDao.open();
 
-        summaryItems = databaseDao.getSummaryOrder();
+        orderDetailItems = databaseDao.getSummaryOrder();
         ListView lvSummmary = (ListView)findViewById(R.id.lvBillList);
-        SummaryListAdapter summaryListAdapter = new SummaryListAdapter(SummaryActivity.this, summaryItems);
-        lvSummmary.setAdapter(summaryListAdapter);
+        OrderItemListAdapter orderItemListAdapter = new OrderItemListAdapter(SummaryActivity.this, orderDetailItems);
+        lvSummmary.setAdapter(orderItemListAdapter);
         TextView tvTotalPrice = (TextView)findViewById(R.id.tvTotalPrice);
         tvTotalPrice.setText(String.valueOf(findTotalPrice()));
 
         btnConfirm = (Button)findViewById(R.id.btnConfirm);
-        if(summaryItems.size() > 0) {
+        if(orderDetailItems.size() > 0) {
             btnConfirm.setOnClickListener(confirmOnItemClickListener);
         } else {
             btnConfirm.setEnabled(false);
@@ -77,8 +77,8 @@ public class SummaryActivity extends Activity{
 
     private double findTotalPrice(){
         double totalPrice = 0;
-        for(SummaryItem summaryItem : summaryItems){
-            totalPrice += (summaryItem.getPrice() * summaryItem.getAmount());
+        for(OrderDetailItem orderDetailItem : orderDetailItems){
+            totalPrice += (orderDetailItem.getPrice() * orderDetailItem.getAmount());
         }
 
         return totalPrice;

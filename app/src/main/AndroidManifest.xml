@@ -28,11 +28,15 @@
 
         <activity
             android:name=".ui.ShowDatabaseActivity"
-            android:label="@string/activity_edit_database"
+            android:label="@string/text_edit_database"
             android:screenOrientation="portrait" />
 
         <activity android:name=".ui.EditDatabaseActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ui.HistoryDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar"/>
     </application>
 
 </manifest>

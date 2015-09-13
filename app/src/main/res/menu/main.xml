@@ -1,8 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".HomeActivity">
+    tools:context=".MainActivity">
 
-    <item android:id="@+id/action_order"
-        android:title="Order"
-        android:showAsAction="always"/>
+    <item
+        android:id="@+id/action_order"
+        android:icon="@mipmap/ic_order"
+        android:showAsAction="always"
+        android:title="Order" />
 </menu>
