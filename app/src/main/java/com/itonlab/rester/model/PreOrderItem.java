@@ -6,6 +6,7 @@ import android.database.Cursor;
 public class PreOrderItem {
     private int id;
     private int menuId;
+    //จำนวนของอาหารที่สั่งว่ากี่จาน เป็นต้น
     private int amount;
 
     public static PreOrderItem newInstance(Cursor cursor){

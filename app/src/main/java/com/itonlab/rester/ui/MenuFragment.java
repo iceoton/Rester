@@ -95,7 +95,7 @@ public class MenuFragment extends Fragment {
                 public void onClick(View v) {
                     int amount = Integer.parseInt(etAmount.getText().toString());
                     preOrderItem.setAmount(amount);
-                    databaseDao.addPreOrder(preOrderItem);
+                    databaseDao.addPreOrderItem(preOrderItem);
                     dialogFoodDetail.dismiss();
                 }
             });

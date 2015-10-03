@@ -1,10 +1,19 @@
 package com.itonlab.rester.model;
 
 public class OrderDetailItem {
+    private int preOderId;
     private int menuId;
     private String name;
     private double price;
     private int amount;
+
+    public int getPreOderId() {
+        return preOderId;
+    }
+
+    public void setPreOderId(int preOderId) {
+        this.preOderId = preOderId;
+    }
 
     public int getMenuId() {
         return menuId;

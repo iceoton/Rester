@@ -8,4 +8,5 @@
     <string name="btn_english_language">English Language</string>
     <string name="text_your_name">Your Name</string>
     <string name="text_master_ip_address">Master IP Address</string>
+    <string name="text_btn_confirm_order_food">Confirm Order</string>
 </resources>

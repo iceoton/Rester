@@ -2,20 +2,30 @@ package com.itonlab.rester.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
 import com.itonlab.rester.adapter.OrderItemListAdapter;
 import com.itonlab.rester.database.ResterDao;
+import com.itonlab.rester.model.FoodItem;
+import com.itonlab.rester.model.MenuTable;
 import com.itonlab.rester.model.PreOrderItem;
 import com.itonlab.rester.model.OrderDetailItem;
 import com.itonlab.rester.util.AppPreference;
+import com.itonlab.rester.util.FileManager;
 import com.itonlab.rester.util.JsonFunction;
 
 import java.util.ArrayList;
@@ -23,10 +33,11 @@ import java.util.ArrayList;
 import app.akexorcist.simpletcplibrary.SimpleTCPClient;
 import app.akexorcist.simpletcplibrary.SimpleTCPServer;
 
-public class SummaryActivity extends Activity{
+public class SummaryActivity extends Activity {
     public final int TCP_PORT = 21111;
     private SimpleTCPServer server;
     ArrayList<OrderDetailItem> orderDetailItems;
+    OrderItemListAdapter orderItemListAdapter;
     ResterDao databaseDao;
 
     private Button btnConfirm;
@@ -40,14 +51,17 @@ public class SummaryActivity extends Activity{
         databaseDao.open();
 
         orderDetailItems = databaseDao.getSummaryOrder();
-        ListView lvSummmary = (ListView)findViewById(R.id.lvBillList);
-        OrderItemListAdapter orderItemListAdapter = new OrderItemListAdapter(SummaryActivity.this, orderDetailItems);
-        lvSummmary.setAdapter(orderItemListAdapter);
-        TextView tvTotalPrice = (TextView)findViewById(R.id.tvTotalPrice);
+        ListView lvSummary = (ListView) findViewById(R.id.lvSummary);
+        orderItemListAdapter = new OrderItemListAdapter(
+                SummaryActivity.this, orderDetailItems, R.layout.summary_list_item);
+        lvSummary.setAdapter(orderItemListAdapter);
+        lvSummary.setOnItemClickListener(summaryOnItemClickListener);
+
+        TextView tvTotalPrice = (TextView) findViewById(R.id.tvTotalPrice);
         tvTotalPrice.setText(String.valueOf(findTotalPrice()));
 
-        btnConfirm = (Button)findViewById(R.id.btnConfirm);
-        if(orderDetailItems.size() > 0) {
+        btnConfirm = (Button) findViewById(R.id.btnConfirm);
+        if (orderDetailItems.size() > 0) {
             btnConfirm.setOnClickListener(confirmOnItemClickListener);
         } else {
             btnConfirm.setEnabled(false);
@@ -75,16 +89,16 @@ public class SummaryActivity extends Activity{
 
     }
 
-    private double findTotalPrice(){
+    private double findTotalPrice() {
         double totalPrice = 0;
-        for(OrderDetailItem orderDetailItem : orderDetailItems){
+        for (OrderDetailItem orderDetailItem : orderDetailItems) {
             totalPrice += (orderDetailItem.getPrice() * orderDetailItem.getAmount());
         }
 
         return totalPrice;
     }
 
-    View.OnClickListener confirmOnItemClickListener = new View.OnClickListener(){
+    View.OnClickListener confirmOnItemClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -92,7 +106,78 @@ public class SummaryActivity extends Activity{
         }
     };
 
-    private void sendOrderToMaster(){
+    AdapterView.OnItemClickListener summaryOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            final int itemId = (int)id;
+            final int itemPosition = position;
+            AlertDialog.Builder builder = new AlertDialog.Builder(SummaryActivity.this);
+            builder.setMessage("ต้องการลบหรือแก้ไข")
+                    .setPositiveButton("ลบ", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            databaseDao.removePreOrderItem(itemId);
+                            orderDetailItems.remove(itemPosition);
+                            dialog.dismiss();
+                            orderItemListAdapter.notifyDataSetChanged();
+                        }
+                    })
+                    .setNegativeButton("แก้ไข", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                            showDialogEditSummary(itemPosition);
+                        }
+                    });
+            // Create the AlertDialog object
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+
+        }
+    };
+
+    private void showDialogEditSummary(final int itemPosition){
+        final OrderDetailItem orderDetailItem = orderDetailItems.get(itemPosition);
+        // Remove from item list. However, it will add back later.
+        orderDetailItems.remove(itemPosition);
+
+        final Dialog dialogEditSummary = new Dialog(SummaryActivity.this);
+        dialogEditSummary.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogEditSummary.setCancelable(true);
+        dialogEditSummary.setContentView(R.layout.dialog_edit_summary);
+        // show detail of food by menu id
+        FoodItem foodItem = databaseDao.getMenuAtId(orderDetailItem.getMenuId());
+        TextView tvName = (TextView)dialogEditSummary.findViewById(R.id.tvName);
+        tvName.setText(foodItem.getNameThai());
+        TextView tvPrice = (TextView)dialogEditSummary.findViewById(R.id.tvPrice);
+        tvPrice.setText(Double.toString(foodItem.getPrice()));
+        ImageView ivImgFood = (ImageView)dialogEditSummary.findViewById(R.id.ivImgFood);
+        FileManager fileManager = new FileManager(SummaryActivity.this);
+        Drawable drawable = fileManager.getDrawableFromAsset(foodItem.getImgPath());
+        ivImgFood.setImageDrawable(drawable);
+        dialogEditSummary.show();
+
+        final EditText etAmount = (EditText)dialogEditSummary.findViewById(R.id.etAmount);
+        etAmount.setText(String.valueOf(orderDetailItem.getAmount()));
+        Button btnOK= (Button)dialogEditSummary.findViewById(R.id.btnOK);
+        btnOK.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                int amount = Integer.parseInt(etAmount.getText().toString());
+                // In case the user entering zero or negative, skip updating.
+                if(amount > 0){
+                    databaseDao.updateAmountPreOrder(orderDetailItem.getMenuId(), amount);
+                    orderDetailItem.setAmount(amount);
+                }
+                // Re-add to item list.
+                orderDetailItems.add(itemPosition, orderDetailItem);
+                dialogEditSummary.dismiss();
+                orderItemListAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    private void sendOrderToMaster() {
         ArrayList<PreOrderItem> preOrderItems = databaseDao.getAllPreOrderItem();
         JsonFunction jsonFunction = new JsonFunction(SummaryActivity.this);
         String json = jsonFunction.getStringJSONOrder(preOrderItems);

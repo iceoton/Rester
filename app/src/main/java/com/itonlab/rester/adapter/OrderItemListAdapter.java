@@ -15,10 +15,17 @@ import java.util.ArrayList;
 public class OrderItemListAdapter extends BaseAdapter{
     Context mContext;
     ArrayList<OrderDetailItem> orderDetailItems;
+    int listItemLayout = R.layout.bill_list_item;
 
     public OrderItemListAdapter(Context mContext, ArrayList<OrderDetailItem> orderDetailItems) {
         this.mContext = mContext;
         this.orderDetailItems = orderDetailItems;
+    }
+
+    public OrderItemListAdapter(Context mContext, ArrayList<OrderDetailItem> orderDetailItems, int listItemLayout) {
+        this.mContext = mContext;
+        this.orderDetailItems = orderDetailItems;
+        this.listItemLayout = listItemLayout;
     }
 
     @Override
@@ -33,14 +40,14 @@ public class OrderItemListAdapter extends BaseAdapter{
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return orderDetailItems.get(position).getPreOderId();
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null){
-            convertView = inflater.inflate(R.layout.bill_list_item, parent, false);
+            convertView = inflater.inflate(listItemLayout, parent, false);
         }
 
         OrderDetailItem orderDetailItem = orderDetailItems.get(position);

@@ -24,7 +24,8 @@
 
         <activity
             android:name=".ui.SummaryActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBar"/>
 
         <activity
             android:name=".ui.ShowDatabaseActivity"

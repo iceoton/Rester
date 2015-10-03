@@ -86,7 +86,7 @@ public class ResterDao {
 
     }
 
-    public void addPreOrder(PreOrderItem preOrderItem){
+    public void addPreOrderItem(PreOrderItem preOrderItem){
         PreOrderItem olePreOrderItem = getPreOrderItemWithMenuID(preOrderItem.getMenuId());
         if(olePreOrderItem == null) {
             ContentValues values = preOrderItem.toContentValues();
@@ -100,6 +100,12 @@ public class ResterDao {
             int newAmount = olePreOrderItem.getAmount() + preOrderItem.getAmount();
             updateAmountPreOrder(preOrderItem.getMenuId(), newAmount);
         }
+    }
+
+    public void removePreOrderItem(int itemId){
+        String whereClause = "id=?";
+        String[] whereArgs = {String.valueOf(itemId)};
+        database.delete(PreOrderTable.TABLE_NAME,whereClause, whereArgs);
     }
 
     private PreOrderItem getPreOrderItemWithMenuID(int menuID){
@@ -244,7 +250,8 @@ public class ResterDao {
 
     public ArrayList<OrderDetailItem> getSummaryOrder(){
         ArrayList<OrderDetailItem> orderDetailItems = new ArrayList<OrderDetailItem>();
-        String sql = "SELECT menu_id, name_th, price, amount FROM pre_order INNER JOIN menu ON menu_id = menu.id";
+        String sql = "SELECT menu_id, name_th, price, amount, pre_order.id" +
+                " FROM pre_order INNER JOIN menu ON menu_id = menu.id";
         Cursor cursor = database.rawQuery(sql,null);
 
         if(cursor.getCount() > 0){
@@ -256,6 +263,7 @@ public class ResterDao {
                 orderDetailItem.setName(cursor.getString(1));
                 orderDetailItem.setPrice(cursor.getDouble(2));
                 orderDetailItem.setAmount(cursor.getInt(3));
+                orderDetailItem.setPreOderId(cursor.getInt(4));
                 orderDetailItems.add(orderDetailItem);
                 cursor.moveToNext();
             }
