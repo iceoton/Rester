@@ -41,6 +41,7 @@ public class SummaryActivity extends Activity {
     ResterDao databaseDao;
 
     private Button btnConfirm;
+    private TextView tvTotalPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,7 @@ public class SummaryActivity extends Activity {
         lvSummary.setAdapter(orderItemListAdapter);
         lvSummary.setOnItemClickListener(summaryOnItemClickListener);
 
-        TextView tvTotalPrice = (TextView) findViewById(R.id.tvTotalPrice);
+        tvTotalPrice = (TextView) findViewById(R.id.tvTotalPrice);
         tvTotalPrice.setText(String.valueOf(findTotalPrice()));
 
         btnConfirm = (Button) findViewById(R.id.btnConfirm);
@@ -119,6 +120,8 @@ public class SummaryActivity extends Activity {
                             orderDetailItems.remove(itemPosition);
                             dialog.dismiss();
                             orderItemListAdapter.notifyDataSetChanged();
+                            // calculate new total price.
+                            tvTotalPrice.setText(String.valueOf(findTotalPrice()));
                         }
                     })
                     .setNegativeButton("แก้ไข", new DialogInterface.OnClickListener() {
@@ -137,8 +140,6 @@ public class SummaryActivity extends Activity {
 
     private void showDialogEditSummary(final int itemPosition){
         final OrderDetailItem orderDetailItem = orderDetailItems.get(itemPosition);
-        // Remove from item list. However, it will add back later.
-        orderDetailItems.remove(itemPosition);
 
         final Dialog dialogEditSummary = new Dialog(SummaryActivity.this);
         dialogEditSummary.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -169,10 +170,21 @@ public class SummaryActivity extends Activity {
                     databaseDao.updateAmountPreOrder(orderDetailItem.getMenuId(), amount);
                     orderDetailItem.setAmount(amount);
                 }
+                // Remove from item list. However, it will add back later.
+                orderDetailItems.remove(itemPosition);
                 // Re-add to item list.
                 orderDetailItems.add(itemPosition, orderDetailItem);
                 dialogEditSummary.dismiss();
                 orderItemListAdapter.notifyDataSetChanged();
+                // calculate new total price.
+                tvTotalPrice.setText(String.valueOf(findTotalPrice()));
+            }
+        });
+
+        dialogEditSummary.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                // do not anything.
             }
         });
     }
