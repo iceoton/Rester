@@ -201,7 +201,7 @@ public class ResterDao {
 
     public ArrayList<FoodOrder> getAllOrder(){
         ArrayList<FoodOrder> foodOrders = new ArrayList<FoodOrder>();
-        String sql = "SELECT * FROM 'order'";
+        String sql = "SELECT * FROM 'order' ORDER BY order_time DESC";
         Cursor cursor = database.rawQuery(sql, null);
 
         if(cursor.getCount() > 0){
