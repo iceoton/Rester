@@ -21,7 +21,7 @@ public class JsonFunction {
         this.mContext = context;
     }
 
-    public String getStringJSONOrder(ArrayList<PreOrderItem> preOrderItems){
+    public String getStringJSONOrder(ArrayList<PreOrderItem> preOrderItems, double totalPrice){
         JSONObject json = new JSONObject();
         try {
             json.put("ip", TCPUtils.getIP(mContext));
@@ -36,6 +36,7 @@ public class JsonFunction {
                 order.put(orderItem);
             }
             json.put("total", total);
+            json.put("total_price", totalPrice);
             json.put("order",order);
 
         } catch (JSONException e) {

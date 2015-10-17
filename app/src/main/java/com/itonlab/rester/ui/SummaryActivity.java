@@ -52,6 +52,7 @@ public class SummaryActivity extends Activity {
         databaseDao.open();
 
         orderDetailItems = databaseDao.getSummaryOrder();
+
         ListView lvSummary = (ListView) findViewById(R.id.lvSummary);
         orderItemListAdapter = new OrderItemListAdapter(
                 SummaryActivity.this, orderDetailItems, R.layout.summary_list_item);
@@ -59,7 +60,7 @@ public class SummaryActivity extends Activity {
         lvSummary.setOnItemClickListener(summaryOnItemClickListener);
 
         tvTotalPrice = (TextView) findViewById(R.id.tvTotalPrice);
-        tvTotalPrice.setText(String.valueOf(findTotalPrice()));
+        tvTotalPrice.setText(String.valueOf(findTotalPrice(orderDetailItems)));
 
         btnConfirm = (Button) findViewById(R.id.btnConfirm);
         if (orderDetailItems.size() > 0) {
@@ -90,7 +91,7 @@ public class SummaryActivity extends Activity {
 
     }
 
-    private double findTotalPrice() {
+    private double findTotalPrice(ArrayList<OrderDetailItem> orderDetailItems) {
         double totalPrice = 0;
         for (OrderDetailItem orderDetailItem : orderDetailItems) {
             totalPrice += (orderDetailItem.getPrice() * orderDetailItem.getAmount());
@@ -121,7 +122,7 @@ public class SummaryActivity extends Activity {
                             dialog.dismiss();
                             orderItemListAdapter.notifyDataSetChanged();
                             // calculate new total price.
-                            tvTotalPrice.setText(String.valueOf(findTotalPrice()));
+                            tvTotalPrice.setText(String.valueOf(findTotalPrice(orderDetailItems)));
                         }
                     })
                     .setNegativeButton("แก้ไข", new DialogInterface.OnClickListener() {
@@ -177,7 +178,7 @@ public class SummaryActivity extends Activity {
                 dialogEditSummary.dismiss();
                 orderItemListAdapter.notifyDataSetChanged();
                 // calculate new total price.
-                tvTotalPrice.setText(String.valueOf(findTotalPrice()));
+                tvTotalPrice.setText(String.valueOf(findTotalPrice(orderDetailItems)));
             }
         });
 
@@ -192,7 +193,7 @@ public class SummaryActivity extends Activity {
     private void sendOrderToMaster() {
         ArrayList<PreOrderItem> preOrderItems = databaseDao.getAllPreOrderItem();
         JsonFunction jsonFunction = new JsonFunction(SummaryActivity.this);
-        String json = jsonFunction.getStringJSONOrder(preOrderItems);
+        String json = jsonFunction.getStringJSONOrder(preOrderItems, findTotalPrice(orderDetailItems));
         Log.d("JSON", json);
 
         AppPreference appPreference = new AppPreference(SummaryActivity.this);
