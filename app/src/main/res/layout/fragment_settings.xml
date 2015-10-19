@@ -67,7 +67,6 @@
             android:layout_weight="1"
             android:ems="9"
             android:hint="IP Address"
-            android:inputType="number"
             android:text="@string/default_ip_address"
             android:textSize="16sp" />
 
