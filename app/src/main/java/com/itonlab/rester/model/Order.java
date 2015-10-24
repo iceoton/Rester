@@ -8,17 +8,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class FoodOrder {
+public class Order {
     private int id;
     private int total;
     private Date orderTime;
     private boolean served;
 
-    public static FoodOrder newInstance(Cursor cursor){
-        FoodOrder foodOrder = new FoodOrder();
-        foodOrder.fromCursor(cursor);
+    public static Order newInstance(Cursor cursor) {
+        Order order = new Order();
+        order.fromCursor(cursor);
 
-        return  foodOrder;
+        return order;
     }
 
     public void fromCursor(Cursor cursor){

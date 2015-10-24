@@ -1,6 +1,9 @@
 package com.itonlab.rester.model;
 
-public class OrderDetailItem {
+/**
+ * คลาสตัวแทนรายละเอียดของ order ต่างๆ ที่จะแสดงในหน้า summary และ history detail
+ */
+public class OrderItemDetail {
     private int preOderId;
     private int menuId;
     private String name;

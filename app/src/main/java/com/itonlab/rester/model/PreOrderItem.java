@@ -8,6 +8,8 @@ public class PreOrderItem {
     private int menuId;
     //จำนวนของอาหารที่สั่งว่ากี่จาน เป็นต้น
     private int amount;
+    //รสชาติเพิ่มเติม
+    private String option;
 
     public static PreOrderItem newInstance(Cursor cursor){
         PreOrderItem preOrderItem = new PreOrderItem();
@@ -20,12 +22,14 @@ public class PreOrderItem {
         this.id = cursor.getInt((cursor.getColumnIndexOrThrow(PreOrderTable.Columns._ID)));
         this.menuId = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._MENU_ID));
         this.amount = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._AMOUNT));
+        this.option = cursor.getString(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._OPTION));
     }
 
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
         values.put(PreOrderTable.Columns._MENU_ID, menuId);
         values.put(PreOrderTable.Columns._AMOUNT, amount);
+        values.put(PreOrderTable.Columns._OPTION, option);
 
         return  values;
     }
@@ -53,4 +57,13 @@ public class PreOrderItem {
     public void setAmount(int amount) {
         this.amount = amount;
     }
+
+    public String getOption() {
+        return option;
+    }
+
+    public void setOption(String option) {
+        this.option = option;
+    }
+
 }

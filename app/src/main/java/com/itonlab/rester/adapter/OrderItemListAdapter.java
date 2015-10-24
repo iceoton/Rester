@@ -8,39 +8,39 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
-import com.itonlab.rester.model.OrderDetailItem;
+import com.itonlab.rester.model.OrderItemDetail;
 
 import java.util.ArrayList;
 
 public class OrderItemListAdapter extends BaseAdapter{
     Context mContext;
-    ArrayList<OrderDetailItem> orderDetailItems;
+    ArrayList<OrderItemDetail> orderItemDetails;
     int listItemLayout = R.layout.bill_list_item;
 
-    public OrderItemListAdapter(Context mContext, ArrayList<OrderDetailItem> orderDetailItems) {
+    public OrderItemListAdapter(Context mContext, ArrayList<OrderItemDetail> orderItemDetails) {
         this.mContext = mContext;
-        this.orderDetailItems = orderDetailItems;
+        this.orderItemDetails = orderItemDetails;
     }
 
-    public OrderItemListAdapter(Context mContext, ArrayList<OrderDetailItem> orderDetailItems, int listItemLayout) {
+    public OrderItemListAdapter(Context mContext, ArrayList<OrderItemDetail> orderItemDetails, int listItemLayout) {
         this.mContext = mContext;
-        this.orderDetailItems = orderDetailItems;
+        this.orderItemDetails = orderItemDetails;
         this.listItemLayout = listItemLayout;
     }
 
     @Override
     public int getCount() {
-        return orderDetailItems.size();
+        return orderItemDetails.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return orderDetailItems.get(position);
+        return orderItemDetails.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return orderDetailItems.get(position).getPreOderId();
+        return orderItemDetails.get(position).getPreOderId();
     }
 
     @Override
@@ -50,15 +50,15 @@ public class OrderItemListAdapter extends BaseAdapter{
             convertView = inflater.inflate(listItemLayout, parent, false);
         }
 
-        OrderDetailItem orderDetailItem = orderDetailItems.get(position);
+        OrderItemDetail orderItemDetail = orderItemDetails.get(position);
         TextView tvName = (TextView)convertView.findViewById(R.id.tvName);
-        tvName.setText(orderDetailItem.getName());
+        tvName.setText(orderItemDetail.getName());
         TextView tvNumber = (TextView)convertView.findViewById(R.id.tvNumber);
-        tvNumber.setText(orderDetailItem.getAmount()+ "x");
+        tvNumber.setText(orderItemDetail.getAmount() + "x");
         TextView tvPrice = (TextView)convertView.findViewById(R.id.tvPrice);
-        tvPrice.setText(Double.toString(orderDetailItem.getPrice()));
+        tvPrice.setText(Double.toString(orderItemDetail.getPrice()));
         TextView tvTotalPrice = (TextView)convertView.findViewById(R.id.tvTotalPrice);
-        double totalPrice = orderDetailItem.getPrice() * orderDetailItem.getAmount();
+        double totalPrice = orderItemDetail.getPrice() * orderItemDetail.getAmount();
         tvTotalPrice.setText(Double.toString(totalPrice));
 
         return convertView;

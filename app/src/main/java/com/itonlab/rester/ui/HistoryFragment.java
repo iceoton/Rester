@@ -12,7 +12,7 @@ import android.widget.ListView;
 import com.itonlab.rester.R;
 import com.itonlab.rester.adapter.OrderListAdapter;
 import com.itonlab.rester.database.ResterDao;
-import com.itonlab.rester.model.FoodOrder;
+import com.itonlab.rester.model.Order;
 import com.itonlab.rester.model.OrderTable;
 
 import java.text.SimpleDateFormat;
@@ -21,7 +21,7 @@ import java.util.Locale;
 
 public class HistoryFragment extends Fragment{
     private ResterDao databaseDao;
-    private ArrayList<FoodOrder> foodOrders;
+    private ArrayList<Order> orders;
     private ListView listViewOrder;
     private OrderListAdapter orderListAdapter;
 
@@ -32,9 +32,9 @@ public class HistoryFragment extends Fragment{
         databaseDao = new ResterDao(getActivity());
         databaseDao.open();
 
-        foodOrders = databaseDao.getAllOrder();
+        orders = databaseDao.getAllOrder();
         listViewOrder = (ListView) rootView.findViewById(R.id.listViewOrder);
-        orderListAdapter = new OrderListAdapter(getActivity(), foodOrders);
+        orderListAdapter = new OrderListAdapter(getActivity(), orders);
         listViewOrder.setAdapter(orderListAdapter);
         listViewOrder.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -42,7 +42,7 @@ public class HistoryFragment extends Fragment{
                 // click to see order detail.
                 int orderId = (int)id;
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy/HH:mm:ss", Locale.getDefault());
-                String orderTime = dateFormat.format(foodOrders.get(position).getOrderTime());
+                String orderTime = dateFormat.format(orders.get(position).getOrderTime());
                 Intent intent = new Intent(getActivity(), HistoryDetailActivity.class);
                 intent.putExtra(OrderTable.Columns._ID, orderId);
                 intent.putExtra(OrderTable.Columns._ORDER_TIME, orderTime);

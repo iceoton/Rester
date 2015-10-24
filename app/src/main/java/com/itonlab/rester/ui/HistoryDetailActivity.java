@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.itonlab.rester.R;
 import com.itonlab.rester.adapter.OrderItemListAdapter;
 import com.itonlab.rester.database.ResterDao;
-import com.itonlab.rester.model.OrderDetailItem;
+import com.itonlab.rester.model.OrderItemDetail;
 import com.itonlab.rester.model.OrderTable;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class HistoryDetailActivity extends Activity {
     private TextView tvOrderId, tvOrderTime, tvTotalPrice;
     private ListView lvOrderItem;
     private OrderItemListAdapter orderItemListAdapter;
-    private ArrayList<OrderDetailItem> orderDetailItems;
+    private ArrayList<OrderItemDetail> orderItemDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +38,8 @@ public class HistoryDetailActivity extends Activity {
         tvOrderTime = (TextView) findViewById(R.id.tvOrderTime);
         tvOrderTime.setText(orderTime);
 
-        orderDetailItems = databaseDao.getOrderDetail(orderId);
-        orderItemListAdapter = new OrderItemListAdapter(HistoryDetailActivity.this, orderDetailItems);
+        orderItemDetails = databaseDao.getOrderDetail(orderId);
+        orderItemListAdapter = new OrderItemListAdapter(HistoryDetailActivity.this, orderItemDetails);
         lvOrderItem = (ListView) findViewById(R.id.lvOrderItem);
         lvOrderItem.setAdapter(orderItemListAdapter);
 
@@ -62,8 +62,8 @@ public class HistoryDetailActivity extends Activity {
 
     private double findTotalPrice(){
         double totalPrice = 0;
-        for(OrderDetailItem orderDetailItem : orderDetailItems){
-            totalPrice += (orderDetailItem.getPrice() * orderDetailItem.getAmount());
+        for (OrderItemDetail orderItemDetail : orderItemDetails) {
+            totalPrice += (orderItemDetail.getPrice() * orderItemDetail.getAmount());
         }
 
         return totalPrice;

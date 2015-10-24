@@ -16,9 +16,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
-import com.itonlab.rester.adapter.FoodListAdapter;
+import com.itonlab.rester.adapter.MenuListAdapter;
 import com.itonlab.rester.database.ResterDao;
-import com.itonlab.rester.model.FoodItem;
+import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.PreOrderItem;
 import com.itonlab.rester.util.FileManager;
 
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class MenuFragment extends Fragment {
     ListView lvFood;
     private ResterDao databaseDao;
-    ArrayList<FoodItem> foodItems;
+    ArrayList<MenuItem> menuItems;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,9 +37,9 @@ public class MenuFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_menu,container, false);
         lvFood = (ListView)rootView.findViewById(R.id.listFood);
 
-        foodItems = databaseDao.getMenu();
-        FoodListAdapter foodListAdapter = new FoodListAdapter(getActivity(),foodItems);
-        lvFood.setAdapter(foodListAdapter);
+        menuItems = databaseDao.getMenu();
+        MenuListAdapter menuListAdapter = new MenuListAdapter(getActivity(), menuItems);
+        lvFood.setAdapter(menuListAdapter);
         lvFood.setOnItemClickListener(menuOnItemClickListener);
 
         return rootView;
@@ -65,14 +65,14 @@ public class MenuFragment extends Fragment {
             dialogFoodDetail.setCancelable(true);
             dialogFoodDetail.setContentView(R.layout.dialog_food_detail);
             // show detail of food
-            FoodItem foodItem = foodItems.get(position);
+            MenuItem menuItem = menuItems.get(position);
             TextView tvName = (TextView)dialogFoodDetail.findViewById(R.id.tvName);
-            tvName.setText(foodItem.getNameThai());
+            tvName.setText(menuItem.getNameThai());
             TextView tvPrice = (TextView)dialogFoodDetail.findViewById(R.id.tvPrice);
-            tvPrice.setText(Double.toString(foodItem.getPrice()));
+            tvPrice.setText(Double.toString(menuItem.getPrice()));
             ImageView ivImgFood = (ImageView)dialogFoodDetail.findViewById(R.id.ivImgFood);
             FileManager fileManager = new FileManager(getActivity());
-            Drawable drawable = fileManager.getDrawableFromAsset(foodItem.getImgPath());
+            Drawable drawable = fileManager.getDrawableFromAsset(menuItem.getImgPath());
             ivImgFood.setImageDrawable(drawable);
             dialogFoodDetail.show();
 
@@ -86,7 +86,7 @@ public class MenuFragment extends Fragment {
             });
 
             final PreOrderItem preOrderItem = new PreOrderItem();
-            preOrderItem.setMenuId(foodItem.getId());
+            preOrderItem.setMenuId(menuItem.getId());
             final EditText etAmount = (EditText)dialogFoodDetail.findViewById(R.id.etAmount);
             Button btnOK= (Button)dialogFoodDetail.findViewById(R.id.btnOK);
             btnOK.setOnClickListener(new View.OnClickListener(){

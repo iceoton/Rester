@@ -12,7 +12,7 @@ import android.widget.ListView;
 import com.itonlab.rester.R;
 import com.itonlab.rester.adapter.DatabaseListAdapter;
 import com.itonlab.rester.database.ResterDao;
-import com.itonlab.rester.model.FoodItem;
+import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.MenuTable;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class ShowDatabaseActivity extends Activity {
     private ResterDao databaseDao;
     private ListView lvData;
-    private ArrayList<FoodItem> foodItems;
+    private ArrayList<MenuItem> menuItems;
     DatabaseListAdapter databaseListAdapter;
 
     @Override
@@ -32,7 +32,7 @@ public class ShowDatabaseActivity extends Activity {
         databaseDao.open();
 
         lvData = (ListView) findViewById(R.id.listData);
-        foodItems = databaseDao.getMenu();
+        menuItems = databaseDao.getMenu();
         lvData.setOnItemClickListener(listDataOnItemClick);
     }
 
@@ -40,8 +40,8 @@ public class ShowDatabaseActivity extends Activity {
     protected void onResume() {
         super.onResume();
         databaseDao.open();
-        foodItems = databaseDao.getMenu();
-        databaseListAdapter = new DatabaseListAdapter(ShowDatabaseActivity.this, foodItems);
+        menuItems = databaseDao.getMenu();
+        databaseListAdapter = new DatabaseListAdapter(ShowDatabaseActivity.this, menuItems);
         lvData.setAdapter(databaseListAdapter);
     }
 

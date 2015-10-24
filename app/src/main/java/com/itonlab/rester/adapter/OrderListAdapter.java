@@ -7,9 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-
 import com.itonlab.rester.R;
-import com.itonlab.rester.model.FoodOrder;
+import com.itonlab.rester.model.Order;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,9 +16,9 @@ import java.util.Locale;
 
 public class OrderListAdapter extends BaseAdapter {
     Context mContext;
-    ArrayList<FoodOrder> orderItems;
+    ArrayList<Order> orderItems;
 
-    public OrderListAdapter(Context mContext, ArrayList<FoodOrder> orderItems) {
+    public OrderListAdapter(Context mContext, ArrayList<Order> orderItems) {
         this.mContext = mContext;
         this.orderItems = orderItems;
     }
@@ -46,7 +45,7 @@ public class OrderListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.order_list_item, parent, false);
         }
 
-        FoodOrder order = orderItems.get(position);
+        Order order = orderItems.get(position);
         TextView tvOrderId = (TextView)convertView.findViewById(R.id.tvOrderId);
         tvOrderId.setText(String.valueOf(order.getId()));
         TextView tvOrderTime = (TextView) convertView.findViewById(R.id.tvOrderTime);

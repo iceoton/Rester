@@ -10,32 +10,33 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
-import com.itonlab.rester.model.FoodItem;
+import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.util.FileManager;
+
 import java.util.ArrayList;
 
-public class FoodListAdapter extends BaseAdapter {
+public class MenuListAdapter extends BaseAdapter {
     Context mContext;
-    ArrayList<FoodItem>  foodItems;
+    ArrayList<MenuItem> menuItems;
 
-    public FoodListAdapter(Context context,ArrayList<FoodItem> foodItems){
+    public MenuListAdapter(Context context, ArrayList<MenuItem> menuItems) {
         this.mContext = context;
-        this.foodItems = foodItems;
+        this.menuItems = menuItems;
     }
 
     @Override
     public int getCount() {
-        return foodItems.size();
+        return menuItems.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return foodItems.get(position);
+        return menuItems.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return foodItems.get(position).getId();
+        return menuItems.get(position).getId();
     }
 
     @Override
@@ -45,14 +46,14 @@ public class FoodListAdapter extends BaseAdapter {
         if(convertView == null){
             convertView = inflater.inflate(R.layout.food_list_item, parent, false);
         }
-        FoodItem foodItem = foodItems.get(position);
+        MenuItem menuItem = menuItems.get(position);
         TextView tvName = (TextView)convertView.findViewById(R.id.tvName);
-        tvName.setText(foodItem.getNameThai());
+        tvName.setText(menuItem.getNameThai());
         TextView tvPrice = (TextView)convertView.findViewById(R.id.tvPrice);
-        tvPrice.setText(Double.toString(foodItem.getPrice()));
+        tvPrice.setText(Double.toString(menuItem.getPrice()));
         ImageView ivImgFood = (ImageView)convertView.findViewById(R.id.ivImgFood);
         FileManager fileManager = new FileManager(mContext);
-        Drawable drawable = fileManager.getDrawableFromAsset(foodItem.getImgPath());
+        Drawable drawable = fileManager.getDrawableFromAsset(menuItem.getImgPath());
         ivImgFood.setImageDrawable(drawable);
 
         return convertView;

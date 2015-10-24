@@ -2,20 +2,22 @@ package com.itonlab.rester.model;
 
 import android.content.ContentValues;
 
-public class FoodOrderItem {
+public class OrderItem {
     private int id;
     private int orderID;
     private int menuID;
     private int amount;
+    private String option;
     private boolean served;
 
-    public ContentValues toContentValues(){
+    public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
-        values.put(OrderItemTable.Columns._ORDER_ID,this.orderID);
+        values.put(OrderItemTable.Columns._ORDER_ID, this.orderID);
         values.put(OrderItemTable.Columns._MENU_ID, this.menuID);
         values.put(OrderItemTable.Columns._AMOUNT, this.amount);
+        values.put(OrderItemTable.Columns._OPTION, this.option);
         int servedValue = 0;
-        if(served == true){
+        if (served == true) {
             servedValue = 1;
         }
         values.put(OrderItemTable.Columns._SERVED, servedValue);
@@ -61,5 +63,13 @@ public class FoodOrderItem {
 
     public void setServed(boolean served) {
         this.served = served;
+    }
+
+    public String getOption() {
+        return option;
+    }
+
+    public void setOption(String option) {
+        this.option = option;
     }
 }
