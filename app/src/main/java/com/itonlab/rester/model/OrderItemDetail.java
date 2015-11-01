@@ -9,6 +9,8 @@ public class OrderItemDetail {
     private String name;
     private double price;
     private int amount;
+    // รสชาติเพิ่มเติม
+    private String option;
 
     public int getPreOderId() {
         return preOderId;
@@ -48,5 +50,13 @@ public class OrderItemDetail {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public String getOption() {
+        return option;
+    }
+
+    public void setOption(String option) {
+        this.option = option;
     }
 }

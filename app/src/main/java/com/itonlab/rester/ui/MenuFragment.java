@@ -60,35 +60,35 @@ public class MenuFragment extends Fragment {
     private AdapterView.OnItemClickListener menuOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final Dialog dialogFoodDetail = new Dialog(getActivity());
-            dialogFoodDetail.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialogFoodDetail.setCancelable(true);
-            dialogFoodDetail.setContentView(R.layout.dialog_food_detail);
+            final Dialog dialogForOrdering = new Dialog(getActivity());
+            dialogForOrdering.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialogForOrdering.setCancelable(true);
+            dialogForOrdering.setContentView(R.layout.dialog_for_ordering);
             // show detail of food
             MenuItem menuItem = menuItems.get(position);
-            TextView tvName = (TextView)dialogFoodDetail.findViewById(R.id.tvName);
+            TextView tvName = (TextView) dialogForOrdering.findViewById(R.id.tvName);
             tvName.setText(menuItem.getNameThai());
-            TextView tvPrice = (TextView)dialogFoodDetail.findViewById(R.id.tvPrice);
+            TextView tvPrice = (TextView) dialogForOrdering.findViewById(R.id.tvPrice);
             tvPrice.setText(Double.toString(menuItem.getPrice()));
-            ImageView ivImgFood = (ImageView)dialogFoodDetail.findViewById(R.id.ivImgFood);
+            ImageView ivImgFood = (ImageView) dialogForOrdering.findViewById(R.id.ivImgFood);
             FileManager fileManager = new FileManager(getActivity());
             Drawable drawable = fileManager.getDrawableFromAsset(menuItem.getImgPath());
             ivImgFood.setImageDrawable(drawable);
-            dialogFoodDetail.show();
+            dialogForOrdering.show();
 
-            Button btnCancel = (Button)dialogFoodDetail.findViewById(R.id.btnCancel);
+            Button btnCancel = (Button) dialogForOrdering.findViewById(R.id.btnCancel);
             btnCancel.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    dialogFoodDetail.cancel();
+                    dialogForOrdering.cancel();
                 }
             });
 
             final PreOrderItem preOrderItem = new PreOrderItem();
             preOrderItem.setMenuId(menuItem.getId());
-            final EditText etAmount = (EditText)dialogFoodDetail.findViewById(R.id.etAmount);
-            Button btnOK= (Button)dialogFoodDetail.findViewById(R.id.btnOK);
+            final EditText etAmount = (EditText) dialogForOrdering.findViewById(R.id.etAmount);
+            Button btnOK = (Button) dialogForOrdering.findViewById(R.id.btnOK);
             btnOK.setOnClickListener(new View.OnClickListener(){
 
                 @Override
@@ -96,7 +96,7 @@ public class MenuFragment extends Fragment {
                     int amount = Integer.parseInt(etAmount.getText().toString());
                     preOrderItem.setAmount(amount);
                     databaseDao.addPreOrderItem(preOrderItem);
-                    dialogFoodDetail.dismiss();
+                    dialogForOrdering.dismiss();
                 }
             });
         }
