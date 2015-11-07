@@ -60,6 +60,10 @@ public class OrderItemListAdapter extends BaseAdapter{
         TextView tvTotalPrice = (TextView)convertView.findViewById(R.id.tvTotalPrice);
         double totalPrice = orderItemDetail.getPrice() * orderItemDetail.getAmount();
         tvTotalPrice.setText(Double.toString(totalPrice));
+        if (listItemLayout == R.layout.summary_list_item) {
+            TextView tvOption = (TextView) convertView.findViewById(R.id.textViewOption);
+            tvOption.setText(orderItemDetail.getOption());
+        }
 
         return convertView;
     }

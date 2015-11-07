@@ -146,14 +146,21 @@ public class SummaryActivity extends Activity {
         dialogEditSummary.setContentView(R.layout.dialog_edit_summary);
         // show detail of food by menu id
         MenuItem menuItem = databaseDao.getMenuAtId(orderItemDetail.getMenuId());
+
         TextView tvName = (TextView) dialogEditSummary.findViewById(R.id.tvName);
         tvName.setText(menuItem.getNameThai());
+
         TextView tvPrice = (TextView) dialogEditSummary.findViewById(R.id.tvPrice);
         tvPrice.setText(Double.toString(menuItem.getPrice()));
+
+        final EditText etOption = (EditText) dialogEditSummary.findViewById(R.id.editTextOption);
+        etOption.setText(orderItemDetail.getOption());
+
         ImageView ivImgFood = (ImageView) dialogEditSummary.findViewById(R.id.ivImgFood);
         FileManager fileManager = new FileManager(SummaryActivity.this);
         Drawable drawable = fileManager.getDrawableFromAsset(menuItem.getImgPath());
         ivImgFood.setImageDrawable(drawable);
+
         dialogEditSummary.show();
 
         final EditText etAmount = (EditText) dialogEditSummary.findViewById(R.id.etAmount);
@@ -164,10 +171,17 @@ public class SummaryActivity extends Activity {
             @Override
             public void onClick(View v) {
                 int amount = Integer.parseInt(etAmount.getText().toString());
+                String option = etOption.getText().toString();
                 // In case the user entering zero or negative, skip updating.
                 if (amount > 0) {
-                    databaseDao.updateAmountPreOrder(orderItemDetail.getMenuId(), amount);
                     orderItemDetail.setAmount(amount);
+                    orderItemDetail.setOption(option);
+                    PreOrderItem preOrderItem = new PreOrderItem();
+                    preOrderItem.setId(orderItemDetail.getPreOderId());
+                    preOrderItem.setAmount(amount);
+                    preOrderItem.setOption(option);
+                    preOrderItem.setMenuId(orderItemDetail.getMenuId());
+                    databaseDao.updatePreOrder(preOrderItem);
                 }
                 // Remove from item list. However, it will add back later.
                 orderItemDetails.remove(itemPosition);

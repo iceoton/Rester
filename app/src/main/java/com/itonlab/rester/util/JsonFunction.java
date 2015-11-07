@@ -33,6 +33,7 @@ public class JsonFunction {
                 JSONObject orderItem = new JSONObject();
                 orderItem.put("id",preOrderItem.getMenuId());
                 orderItem.put("amount", preOrderItem.getAmount());
+                orderItem.put("option", preOrderItem.getOption());
                 order.put(orderItem);
             }
             json.put("total", total);

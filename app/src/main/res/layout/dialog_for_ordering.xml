@@ -30,6 +30,18 @@
 
     </LinearLayout>
 
+    <EditText
+        android:id="@+id/editTextOption"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_margin="@dimen/normal_layout_margin"
+        android:background="@drawable/white_square_shape"
+        android:hint="taste (optional)"
+        android:inputType="textMultiLine"
+        android:maxLength="32"
+        android:padding="@dimen/normal_layout_padding"
+        android:singleLine="false" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

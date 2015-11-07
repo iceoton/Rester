@@ -59,7 +59,7 @@ public class MenuFragment extends Fragment {
 
     private AdapterView.OnItemClickListener menuOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(final AdapterView<?> parent, View view, int position, long id) {
             final Dialog dialogForOrdering = new Dialog(getActivity());
             dialogForOrdering.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialogForOrdering.setCancelable(true);
@@ -88,13 +88,16 @@ public class MenuFragment extends Fragment {
             final PreOrderItem preOrderItem = new PreOrderItem();
             preOrderItem.setMenuId(menuItem.getId());
             final EditText etAmount = (EditText) dialogForOrdering.findViewById(R.id.etAmount);
+            final EditText etOption = (EditText) dialogForOrdering.findViewById(R.id.editTextOption);
             Button btnOK = (Button) dialogForOrdering.findViewById(R.id.btnOK);
             btnOK.setOnClickListener(new View.OnClickListener(){
 
                 @Override
                 public void onClick(View v) {
                     int amount = Integer.parseInt(etAmount.getText().toString());
+                    String option = etOption.getText().toString();
                     preOrderItem.setAmount(amount);
+                    preOrderItem.setOption(option);
                     databaseDao.addPreOrderItem(preOrderItem);
                     dialogForOrdering.dismiss();
                 }
