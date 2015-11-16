@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.itonlab.rester.R;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 public class ShowDatabaseActivity extends Activity {
     private ResterDao databaseDao;
     private ListView lvData;
+    private Button btnAddData;
     private ArrayList<MenuItem> menuItems;
     DatabaseListAdapter databaseListAdapter;
 
@@ -34,6 +36,9 @@ public class ShowDatabaseActivity extends Activity {
         lvData = (ListView) findViewById(R.id.listData);
         menuItems = databaseDao.getMenu();
         lvData.setOnItemClickListener(listDataOnItemClick);
+
+        btnAddData = (Button) findViewById(R.id.btnAdd);
+        btnAddData.setOnClickListener(addDataOnclickListener);
     }
 
     @Override
@@ -53,19 +58,26 @@ public class ShowDatabaseActivity extends Activity {
 
     AdapterView.OnItemClickListener listDataOnItemClick = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            final int itemId = (int)id;
+        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+            final int menuId = (int) id;
             AlertDialog.Builder builder = new AlertDialog.Builder(ShowDatabaseActivity.this);
-            builder.setMessage("ต้องการแก้ไขข้อมูลใช่หรือไม่?")
-                    .setPositiveButton("ไม่ใช่", new DialogInterface.OnClickListener() {
+            builder.setMessage("ต้องการลบหรือแก้ไข?")
+                    .setPositiveButton("ลบ", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
+                            // Delete data in the database.
+                            databaseDao.deleteMenu(menuId);
+
+                            // Remove item from ListView.
+                            menuItems.remove(position);
+                            databaseListAdapter.notifyDataSetChanged();
+
+                            dialog.dismiss();
                         }
                     })
                     .setNegativeButton("แก้ไข", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             Intent intent = new Intent(ShowDatabaseActivity.this, EditDatabaseActivity.class);
-                            intent.putExtra(MenuTable.Columns._ID, itemId);
+                            intent.putExtra(MenuTable.Columns._ID, menuId);
                             startActivity(intent);
                         }
                     });
@@ -73,6 +85,15 @@ public class ShowDatabaseActivity extends Activity {
             AlertDialog dialog = builder.create();
             dialog.show();
 
+        }
+    };
+
+    View.OnClickListener addDataOnclickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(ShowDatabaseActivity.this, EditDatabaseActivity.class);
+            intent.putExtra(MenuTable.Columns._ID, 0);
+            startActivity(intent);
         }
     };
 

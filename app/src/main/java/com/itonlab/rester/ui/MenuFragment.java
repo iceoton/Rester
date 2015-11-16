@@ -2,7 +2,6 @@ package com.itonlab.rester.ui;
 
 import android.app.Dialog;
 import android.app.Fragment;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +18,8 @@ import com.itonlab.rester.R;
 import com.itonlab.rester.adapter.MenuListAdapter;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
+import com.itonlab.rester.model.Picture;
 import com.itonlab.rester.model.PreOrderItem;
-import com.itonlab.rester.util.FileManager;
 
 import java.util.ArrayList;
 
@@ -52,9 +51,9 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
+    public void onStop() {
         databaseDao.close();
-        super.onPause();
+        super.onStop();
     }
 
     private AdapterView.OnItemClickListener menuOnItemClickListener = new AdapterView.OnItemClickListener() {
@@ -71,9 +70,10 @@ public class MenuFragment extends Fragment {
             TextView tvPrice = (TextView) dialogForOrdering.findViewById(R.id.tvPrice);
             tvPrice.setText(Double.toString(menuItem.getPrice()));
             ImageView ivImgFood = (ImageView) dialogForOrdering.findViewById(R.id.ivImgFood);
-            FileManager fileManager = new FileManager(getActivity());
-            Drawable drawable = fileManager.getDrawableFromAsset(menuItem.getImgPath());
-            ivImgFood.setImageDrawable(drawable);
+
+            Picture picture = databaseDao.getMenuPicture(menuItem.getPictureId());
+            ivImgFood.setImageBitmap(picture.getBitmapPicture());
+
             dialogForOrdering.show();
 
             Button btnCancel = (Button) dialogForOrdering.findViewById(R.id.btnCancel);

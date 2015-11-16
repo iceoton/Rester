@@ -1,5 +1,6 @@
 package com.itonlab.rester.model;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 
 public class MenuItem {
@@ -8,7 +9,26 @@ public class MenuItem {
     private String nameThai;
     private String nameEng;
     private double price;
-    private String imgPath;
+    private int pictureId;
+
+    public MenuItem() {
+        this.code = "";
+        this.nameEng = "";
+        this.nameThai = "";
+        this.price = 0d;
+        this.pictureId = 0;
+    }
+
+    public ContentValues toContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(MenuTable.Columns._CODE, this.code);
+        values.put(MenuTable.Columns._NAME_THAI, this.nameThai);
+        values.put(MenuTable.Columns._NAME_ENG, this.nameEng);
+        values.put(MenuTable.Columns._PRICE, this.price);
+        values.put(MenuTable.Columns._PICTURE_ID, this.pictureId);
+
+        return values;
+    }
 
     public static MenuItem newInstance(Cursor cursor) {
         MenuItem menuItem = new MenuItem();
@@ -23,7 +43,7 @@ public class MenuItem {
         this.nameThai = cursor.getString(cursor.getColumnIndexOrThrow(MenuTable.Columns._NAME_THAI));
         this.nameEng = cursor.getString(cursor.getColumnIndexOrThrow(MenuTable.Columns._NAME_ENG));
         this.price = cursor.getDouble(cursor.getColumnIndexOrThrow(MenuTable.Columns._PRICE));
-        this.imgPath = cursor.getString(cursor.getColumnIndexOrThrow(MenuTable.Columns._IMAGE_PATH));
+        this.pictureId = cursor.getInt(cursor.getColumnIndexOrThrow(MenuTable.Columns._PICTURE_ID));
     }
 
     public int getId() {
@@ -46,10 +66,6 @@ public class MenuItem {
         return price;
     }
 
-    public String getImgPath() {
-        return imgPath;
-    }
-
     public void setCode(String code) {
         this.code = code;
     }
@@ -66,7 +82,11 @@ public class MenuItem {
         this.price = price;
     }
 
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
+    public int getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(int pictureId) {
+        this.pictureId = pictureId;
     }
 }

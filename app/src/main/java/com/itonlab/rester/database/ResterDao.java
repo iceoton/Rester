@@ -14,6 +14,8 @@ import com.itonlab.rester.model.OrderItem;
 import com.itonlab.rester.model.OrderItemDetail;
 import com.itonlab.rester.model.OrderItemTable;
 import com.itonlab.rester.model.OrderTable;
+import com.itonlab.rester.model.Picture;
+import com.itonlab.rester.model.PictureTable;
 import com.itonlab.rester.model.PreOrderItem;
 import com.itonlab.rester.model.PreOrderTable;
 
@@ -73,6 +75,26 @@ public class ResterDao {
         return menuItem;
     }
 
+    public void addMenu(MenuItem menuItem) {
+        ContentValues values = menuItem.toContentValues();
+        long insertIndex = database.insert(MenuTable.TABLE_NAME, null, values);
+        if (insertIndex == -1) {
+            Log.d(TAG, "An error occurred on inserting menu table.");
+        } else {
+            Log.d(TAG, "insert menu successful.");
+        }
+    }
+
+    public void deleteMenu(int menuId) {
+        // delete its picture
+        int pictureId = getMenuAtId(menuId).getPictureId();
+        deleteMenuPicture(pictureId);
+        // and last, delete it
+        String whereClause = "id=?";
+        String[] whereArgs = {String.valueOf(menuId)};
+        database.delete(MenuTable.TABLE_NAME, whereClause, whereArgs);
+    }
+
     public void updateMenu(MenuItem menuItem) {
         ContentValues values = new ContentValues();
         values.put(MenuTable.Columns._NAME_THAI, menuItem.getNameThai());
@@ -84,6 +106,50 @@ public class ResterDao {
             Log.d(TAG, "[Menu]update menu id " + menuItem.getId() + " not successful.");
         }
 
+    }
+
+    public Picture getMenuPicture(int pictureId) {
+        String sql = "SELECT * FROM picture WHERE id=?";
+        String[] selectionArgs = {String.valueOf(pictureId)};
+        Cursor cursor = database.rawQuery(sql, selectionArgs);
+
+        Picture picture = null;
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            picture = Picture.newInstance(cursor);
+        }
+        cursor.close();
+
+
+        return picture;
+    }
+
+    public int addMenuPicture(Picture picture) {
+        ContentValues values = picture.toContentValues();
+        long insertIndex = database.insert(PictureTable.TABLE_NAME, null, values);
+        if (insertIndex == -1) {
+            Log.d(TAG, "An error occurred on inserting picture table.");
+        } else {
+            Log.d(TAG, "insert picture successful.");
+        }
+
+        return (int) insertIndex;
+    }
+
+    public void updateMenuPicture(Picture picture) {
+        ContentValues values = picture.toContentValues();
+        String[] whereArgs = {String.valueOf(picture.getId())};
+
+        int affected = database.update(PictureTable.TABLE_NAME, values, "id=?", whereArgs);
+        if (affected == 0) {
+            Log.d(TAG, "[Menu]update menu id " + picture.getId() + " not successful.");
+        }
+    }
+
+    public void deleteMenuPicture(int pictureId) {
+        String whereClause = "id=?";
+        String[] whereArgs = {String.valueOf(pictureId)};
+        database.delete(PictureTable.TABLE_NAME, whereClause, whereArgs);
     }
 
     public void addPreOrderItem(PreOrderItem preOrderItem) {

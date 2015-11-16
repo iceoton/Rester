@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,9 +20,9 @@ import com.itonlab.rester.adapter.OrderItemListAdapter;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.OrderItemDetail;
+import com.itonlab.rester.model.Picture;
 import com.itonlab.rester.model.PreOrderItem;
 import com.itonlab.rester.util.AppPreference;
-import com.itonlab.rester.util.FileManager;
 import com.itonlab.rester.util.JsonFunction;
 
 import java.util.ArrayList;
@@ -157,9 +156,8 @@ public class SummaryActivity extends Activity {
         etOption.setText(orderItemDetail.getOption());
 
         ImageView ivImgFood = (ImageView) dialogEditSummary.findViewById(R.id.ivImgFood);
-        FileManager fileManager = new FileManager(SummaryActivity.this);
-        Drawable drawable = fileManager.getDrawableFromAsset(menuItem.getImgPath());
-        ivImgFood.setImageDrawable(drawable);
+        Picture picture = databaseDao.getMenuPicture(menuItem.getPictureId());
+        ivImgFood.setImageBitmap(picture.getBitmapPicture());
 
         dialogEditSummary.show();
 
