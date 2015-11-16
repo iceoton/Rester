@@ -29,17 +29,17 @@ public class JsonFunction {
             //prepare body for add to message
             JSONObject messageBody = new JSONObject();
             messageBody.put("name", appPreference.getYourName());
-            int total = 0;
+            int total_quantity = 0;
             JSONArray order = new JSONArray();
             for(PreOrderItem preOrderItem: preOrderItems) {
-                total += preOrderItem.getAmount();
+                total_quantity += preOrderItem.getQuantity();
                 JSONObject orderItem = new JSONObject();
-                orderItem.put("menu_id", preOrderItem.getMenuId());
-                orderItem.put("amount", preOrderItem.getAmount());
+                orderItem.put("menu_code", preOrderItem.getMenuCode());
+                orderItem.put("quantity", preOrderItem.getQuantity());
                 orderItem.put("option", preOrderItem.getOption());
                 order.put(orderItem);
             }
-            messageBody.put("total", total);
+            messageBody.put("total_quantity", total_quantity);
             messageBody.put("total_price", totalPrice);
             messageBody.put("order", order);
             // add body to message

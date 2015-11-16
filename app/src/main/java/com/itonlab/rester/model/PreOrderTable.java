@@ -9,20 +9,14 @@ public class PreOrderTable {
         public Columns(){}
 
         public static final String _ID = "id";
-        public static final String _MENU_ID = "menu_id";
-        public static final String _AMOUNT = "amount";
+        public static final String _MENU_CODE = "menu_code";
+        public static final String _QUANTITY = "quantity";
         public static final String _OPTION = "option";
     }
 
     public static void onCreate(SQLiteDatabase database) {
-        final String CREATE_PLACE = "CREATE TABLE " + TABLE_NAME
-                + "(id INTEGER PRIMARY KEY AUTOINCREMENT, menu_id INTEGER NOT NULL," +
-                " amount INTEGER NOT NULL, option TEXT);";
-        database.execSQL(CREATE_PLACE);
     }
 
     public static void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(database);
     }
 }

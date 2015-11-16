@@ -86,7 +86,7 @@ public class MenuFragment extends Fragment {
             });
 
             final PreOrderItem preOrderItem = new PreOrderItem();
-            preOrderItem.setMenuId(menuItem.getId());
+            preOrderItem.setMenuCode(menuItem.getCode());
             final EditText etAmount = (EditText) dialogForOrdering.findViewById(R.id.etAmount);
             final EditText etOption = (EditText) dialogForOrdering.findViewById(R.id.editTextOption);
             Button btnOK = (Button) dialogForOrdering.findViewById(R.id.btnOK);
@@ -96,7 +96,7 @@ public class MenuFragment extends Fragment {
                 public void onClick(View v) {
                     int amount = Integer.parseInt(etAmount.getText().toString());
                     String option = etOption.getText().toString();
-                    preOrderItem.setAmount(amount);
+                    preOrderItem.setQuantity(amount);
                     preOrderItem.setOption(option);
                     databaseDao.addPreOrderItem(preOrderItem);
                     dialogForOrdering.dismiss();

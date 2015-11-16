@@ -123,8 +123,10 @@ public class EditDatabaseActivity  extends Activity{
     }
 
     private void saveToDatabase(){
+        String menuCode = etCode.getText().toString().trim();
         String menuName = etName.getText().toString().trim();
         double price = Double.parseDouble(etPrice.getText().toString().trim());
+        menuItem.setCode(menuCode);
         menuItem.setNameThai(menuName);
         menuItem.setPrice(price);
         updateMenuPicture();
@@ -133,9 +135,11 @@ public class EditDatabaseActivity  extends Activity{
     }
 
     private void addDataToDatabase() {
+        String menuCode = etCode.getText().toString().trim();
         String menuName = etName.getText().toString().trim();
         double price = Double.parseDouble(etPrice.getText().toString().trim());
         if (!menuName.equals("")) {
+            menuItem.setCode(menuCode);
             menuItem.setNameThai(menuName);
             menuItem.setPrice(price);
             menuItem.setPictureId(addMenuPicture());

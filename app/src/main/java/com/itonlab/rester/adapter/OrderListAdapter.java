@@ -46,8 +46,8 @@ public class OrderListAdapter extends BaseAdapter {
         }
 
         Order order = orderItems.get(position);
-        TextView tvOrderId = (TextView)convertView.findViewById(R.id.tvOrderId);
-        tvOrderId.setText(String.valueOf(order.getId()));
+        TextView tvOrderNumber = (TextView) convertView.findViewById(R.id.tvOrderNumber);
+        tvOrderNumber.setText(String.valueOf(position + 1));
         TextView tvOrderTime = (TextView) convertView.findViewById(R.id.tvOrderTime);
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",Locale.getDefault());
@@ -55,7 +55,7 @@ public class OrderListAdapter extends BaseAdapter {
         tvOrderTime.setText(dateString);
 
         TextView tvNumberOfFood = (TextView)convertView.findViewById(R.id.tvNumberOfFood);
-        tvNumberOfFood.setText(String.valueOf(order.getTotal()));
+        tvNumberOfFood.setText(String.valueOf(order.getTotalQuantity()));
 
         return convertView;
     }

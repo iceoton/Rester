@@ -5,9 +5,9 @@ import android.database.Cursor;
 
 public class PreOrderItem {
     private int id;
-    private int menuId;
+    private String menuCode;
     //จำนวนของอาหารที่สั่งว่ากี่จาน เป็นต้น
-    private int amount;
+    private int quantity;
     //รสชาติเพิ่มเติม
     private String option;
 
@@ -20,15 +20,15 @@ public class PreOrderItem {
 
     public void fromCursor(Cursor cursor){
         this.id = cursor.getInt((cursor.getColumnIndexOrThrow(PreOrderTable.Columns._ID)));
-        this.menuId = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._MENU_ID));
-        this.amount = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._AMOUNT));
+        this.menuCode = cursor.getString(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._MENU_CODE));
+        this.quantity = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._QUANTITY));
         this.option = cursor.getString(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._OPTION));
     }
 
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
-        values.put(PreOrderTable.Columns._MENU_ID, menuId);
-        values.put(PreOrderTable.Columns._AMOUNT, amount);
+        values.put(PreOrderTable.Columns._MENU_CODE, menuCode);
+        values.put(PreOrderTable.Columns._QUANTITY, quantity);
         values.put(PreOrderTable.Columns._OPTION, option);
 
         return  values;
@@ -38,24 +38,24 @@ public class PreOrderItem {
         return id;
     }
 
-    public int getMenuId() {
-        return menuId;
+    public String getMenuCode() {
+        return menuCode;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getQuantity() {
+        return quantity;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setMenuId(int menuId) {
-        this.menuId = menuId;
+    public void setMenuCode(String menuCode) {
+        this.menuCode = menuCode;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public String getOption() {

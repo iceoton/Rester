@@ -5,10 +5,10 @@ package com.itonlab.rester.model;
  */
 public class OrderItemDetail {
     private int preOderId;
-    private int menuId;
+    private String menuCode;
     private String name;
     private double price;
-    private int amount;
+    private int quantity;
     // รสชาติเพิ่มเติม
     private String option;
 
@@ -20,12 +20,12 @@ public class OrderItemDetail {
         this.preOderId = preOderId;
     }
 
-    public int getMenuId() {
-        return menuId;
+    public String getMenuCode() {
+        return menuCode;
     }
 
-    public void setMenuId(int menuId) {
-        this.menuId = menuId;
+    public void setMenuCode(String menuCode) {
+        this.menuCode = menuCode;
     }
 
     public String getName() {
@@ -44,12 +44,12 @@ public class OrderItemDetail {
         this.price = price;
     }
 
-    public int getAmount() {
-        return amount;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public String getOption() {

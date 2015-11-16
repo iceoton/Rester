@@ -91,7 +91,7 @@ public class SummaryActivity extends Activity {
     private double findTotalPrice(ArrayList<OrderItemDetail> orderItemDetails) {
         double totalPrice = 0;
         for (OrderItemDetail orderItemDetail : orderItemDetails) {
-            totalPrice += (orderItemDetail.getPrice() * orderItemDetail.getAmount());
+            totalPrice += (orderItemDetail.getPrice() * orderItemDetail.getQuantity());
         }
 
         return totalPrice;
@@ -143,8 +143,8 @@ public class SummaryActivity extends Activity {
         dialogEditSummary.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogEditSummary.setCancelable(true);
         dialogEditSummary.setContentView(R.layout.dialog_edit_summary);
-        // show detail of food by menu id
-        MenuItem menuItem = databaseDao.getMenuAtId(orderItemDetail.getMenuId());
+        // show detail of food by menu code
+        MenuItem menuItem = databaseDao.getMenuByCode(orderItemDetail.getMenuCode());
 
         TextView tvName = (TextView) dialogEditSummary.findViewById(R.id.tvName);
         tvName.setText(menuItem.getNameThai());
@@ -162,7 +162,7 @@ public class SummaryActivity extends Activity {
         dialogEditSummary.show();
 
         final EditText etAmount = (EditText) dialogEditSummary.findViewById(R.id.etAmount);
-        etAmount.setText(String.valueOf(orderItemDetail.getAmount()));
+        etAmount.setText(String.valueOf(orderItemDetail.getQuantity()));
         Button btnOK = (Button) dialogEditSummary.findViewById(R.id.btnOK);
         btnOK.setOnClickListener(new View.OnClickListener() {
 
@@ -172,13 +172,13 @@ public class SummaryActivity extends Activity {
                 String option = etOption.getText().toString();
                 // In case the user entering zero or negative, skip updating.
                 if (amount > 0) {
-                    orderItemDetail.setAmount(amount);
+                    orderItemDetail.setQuantity(amount);
                     orderItemDetail.setOption(option);
                     PreOrderItem preOrderItem = new PreOrderItem();
                     preOrderItem.setId(orderItemDetail.getPreOderId());
-                    preOrderItem.setAmount(amount);
+                    preOrderItem.setQuantity(amount);
                     preOrderItem.setOption(option);
-                    preOrderItem.setMenuId(orderItemDetail.getMenuId());
+                    preOrderItem.setMenuCode(orderItemDetail.getMenuCode());
                     databaseDao.updatePreOrder(preOrderItem);
                 }
                 // Remove from item list. However, it will add back later.

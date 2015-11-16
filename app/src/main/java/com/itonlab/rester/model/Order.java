@@ -10,7 +10,7 @@ import java.util.TimeZone;
 
 public class Order {
     private int id;
-    private int total;
+    private int totalQuantity;
     private Date orderTime;
     private boolean served;
 
@@ -23,7 +23,7 @@ public class Order {
 
     public void fromCursor(Cursor cursor){
         this.id = cursor.getInt(cursor.getColumnIndexOrThrow(OrderTable.Columns._ID));
-        this.total = cursor.getInt(cursor.getColumnIndexOrThrow(OrderTable.Columns._TOTAL));
+        this.totalQuantity = cursor.getInt(cursor.getColumnIndexOrThrow(OrderTable.Columns._TOTAL_QUANTITY));
         String dateTime = cursor.getString(cursor.getColumnIndexOrThrow(OrderTable.Columns._ORDER_TIME));
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -32,16 +32,12 @@ public class Order {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if(cursor.getInt(cursor.getColumnIndexOrThrow(OrderTable.Columns._SERVED)) == 1) {
-            this.served = true;
-        } else {
-            this.served = false;
-        }
+        this.served = cursor.getInt(cursor.getColumnIndexOrThrow(OrderTable.Columns._SERVED)) == 1;
     }
 
     public ContentValues toContentValues(){
         ContentValues values = new ContentValues();
-        values.put(OrderTable.Columns._TOTAL, this.total);
+        values.put(OrderTable.Columns._TOTAL_QUANTITY, this.totalQuantity);
 
         return values;
     }
@@ -54,12 +50,12 @@ public class Order {
         this.id = id;
     }
 
-    public int getTotal() {
-        return total;
+    public int getTotalQuantity() {
+        return totalQuantity;
     }
 
-    public void setTotal(int total) {
-        this.total = total;
+    public void setTotalQuantity(int totalQuantity) {
+        this.totalQuantity = totalQuantity;
     }
 
     public Date getOrderTime() {
