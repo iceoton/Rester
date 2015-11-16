@@ -205,7 +205,7 @@ public class SummaryActivity extends Activity {
     private void sendOrderToMaster() {
         ArrayList<PreOrderItem> preOrderItems = databaseDao.getAllPreOrderItem();
         JsonFunction jsonFunction = new JsonFunction(SummaryActivity.this);
-        String json = jsonFunction.getStringJSONOrder(preOrderItems, findTotalPrice(orderItemDetails));
+        String json = jsonFunction.getJSONOrderMessage(preOrderItems, findTotalPrice(orderItemDetails));
         Log.d("JSON", json);
 
         AppPreference appPreference = new AppPreference(SummaryActivity.this);

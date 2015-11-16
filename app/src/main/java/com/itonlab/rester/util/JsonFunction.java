@@ -21,29 +21,34 @@ public class JsonFunction {
         this.mContext = context;
     }
 
-    public String getStringJSONOrder(ArrayList<PreOrderItem> preOrderItems, double totalPrice){
-        JSONObject json = new JSONObject();
+    public String getJSONOrderMessage(ArrayList<PreOrderItem> preOrderItems, double totalPrice) {
+        JSONObject message = new JSONObject();
         try {
-            json.put("ip", TCPUtils.getIP(mContext));
-            json.put("name", appPreference.getYourName());
+            message.put("message_type", "order_ms");
+            message.put("from_ip", TCPUtils.getIP(mContext));
+            //prepare body for add to message
+            JSONObject messageBody = new JSONObject();
+            messageBody.put("name", appPreference.getYourName());
             int total = 0;
             JSONArray order = new JSONArray();
             for(PreOrderItem preOrderItem: preOrderItems) {
                 total += preOrderItem.getAmount();
                 JSONObject orderItem = new JSONObject();
-                orderItem.put("id",preOrderItem.getMenuId());
+                orderItem.put("menu_id", preOrderItem.getMenuId());
                 orderItem.put("amount", preOrderItem.getAmount());
                 orderItem.put("option", preOrderItem.getOption());
                 order.put(orderItem);
             }
-            json.put("total", total);
-            json.put("total_price", totalPrice);
-            json.put("order",order);
+            messageBody.put("total", total);
+            messageBody.put("total_price", totalPrice);
+            messageBody.put("order", order);
+            // add body to message
+            message.put("body", messageBody);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return json.toString();
+        return message.toString();
     }
 }
