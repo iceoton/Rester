@@ -15,10 +15,15 @@ import com.itonlab.rester.adapter.DatabaseListAdapter;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.MenuTable;
+import com.itonlab.rester.util.JsonFunction;
 
 import java.util.ArrayList;
 
+import app.akexorcist.simpletcplibrary.SimpleTCPServer;
+
 public class ShowDatabaseActivity extends Activity {
+    public final int TCP_PORT = 21111;
+    private SimpleTCPServer server;
     private ResterDao databaseDao;
     private ListView lvData;
     private Button btnAddData;
@@ -29,6 +34,15 @@ public class ShowDatabaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_database);
+
+        server = new SimpleTCPServer(TCP_PORT);
+        server.setOnDataReceivedListener(new SimpleTCPServer.OnDataReceivedListener() {
+            @Override
+            public void onDataReceived(String message, String ip) {
+                JsonFunction jsonFunction = new JsonFunction(getApplicationContext());
+                jsonFunction.decideWhatToDo(JsonFunction.acceptMessage(message));
+            }
+        });
 
         databaseDao = new ResterDao(ShowDatabaseActivity.this);
         databaseDao.open();
@@ -44,6 +58,7 @@ public class ShowDatabaseActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        server.start();
         databaseDao.open();
         menuItems = databaseDao.getMenu();
         databaseListAdapter = new DatabaseListAdapter(ShowDatabaseActivity.this, menuItems);
@@ -54,6 +69,12 @@ public class ShowDatabaseActivity extends Activity {
     protected void onPause() {
         databaseDao.close();
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        server.stop();
     }
 
     AdapterView.OnItemClickListener listDataOnItemClick = new AdapterView.OnItemClickListener() {

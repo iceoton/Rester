@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -17,13 +16,16 @@ import android.widget.TextView;
 
 import com.itonlab.rester.R;
 import com.itonlab.rester.util.AppPreference;
+import com.itonlab.rester.util.JsonFunction;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
+import app.akexorcist.simpletcplibrary.SimpleTCPServer;
 import app.akexorcist.simpletcplibrary.TCPUtils;
 
 public class SettingsFragment extends Fragment{
+    public final int TCP_PORT = 21111;
+    private SimpleTCPServer server;
     private TextView textViewIP;
     private EditText editTextIP, editTextName;
     private LinearLayout layoutEditDatabase;
@@ -32,6 +34,15 @@ public class SettingsFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        server = new SimpleTCPServer(TCP_PORT);
+        server.setOnDataReceivedListener(new SimpleTCPServer.OnDataReceivedListener() {
+            @Override
+            public void onDataReceived(String message, String ip) {
+                JsonFunction jsonFunction = new JsonFunction(getActivity());
+                jsonFunction.decideWhatToDo(JsonFunction.acceptMessage(message));
+            }
+        });
 
         View rootView = inflater.inflate(R.layout.fragment_settings,container, false);
 
@@ -81,12 +92,14 @@ public class SettingsFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+        server.start();
         loadSettingsValue();
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        server.stop();
         saveSettingsValue();
 
     }

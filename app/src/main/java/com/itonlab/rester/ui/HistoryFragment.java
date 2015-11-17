@@ -14,12 +14,17 @@ import com.itonlab.rester.adapter.OrderListAdapter;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.Order;
 import com.itonlab.rester.model.OrderTable;
+import com.itonlab.rester.util.JsonFunction;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import app.akexorcist.simpletcplibrary.SimpleTCPServer;
+
 public class HistoryFragment extends Fragment{
+    public final int TCP_PORT = 21111;
+    private SimpleTCPServer server;
     private ResterDao databaseDao;
     private ArrayList<Order> orders;
     private ListView listViewOrder;
@@ -27,6 +32,15 @@ public class HistoryFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        server = new SimpleTCPServer(TCP_PORT);
+        server.setOnDataReceivedListener(new SimpleTCPServer.OnDataReceivedListener() {
+            @Override
+            public void onDataReceived(String message, String ip) {
+                JsonFunction jsonFunction = new JsonFunction(getActivity());
+                jsonFunction.decideWhatToDo(JsonFunction.acceptMessage(message));
+            }
+        });
+
         View rootView = inflater.inflate(R.layout.fragment_history,container, false);
 
         databaseDao = new ResterDao(getActivity());
@@ -62,6 +76,7 @@ public class HistoryFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
+        server.start();
         databaseDao.open();
     }
 
@@ -69,5 +84,11 @@ public class HistoryFragment extends Fragment{
     public void onPause() {
         super.onPause();
         databaseDao.close();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        server.stop();
     }
 }

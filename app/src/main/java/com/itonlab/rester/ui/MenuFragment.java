@@ -20,16 +20,29 @@ import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.Picture;
 import com.itonlab.rester.model.PreOrderItem;
+import com.itonlab.rester.util.JsonFunction;
 
 import java.util.ArrayList;
 
+import app.akexorcist.simpletcplibrary.SimpleTCPServer;
+
 public class MenuFragment extends Fragment {
+    public final int TCP_PORT = 21111;
+    private SimpleTCPServer server;
     ListView lvFood;
     private ResterDao databaseDao;
     ArrayList<MenuItem> menuItems;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        server = new SimpleTCPServer(TCP_PORT);
+        server.setOnDataReceivedListener(new SimpleTCPServer.OnDataReceivedListener() {
+            @Override
+            public void onDataReceived(String message, String ip) {
+                JsonFunction jsonFunction = new JsonFunction(getActivity());
+                jsonFunction.decideWhatToDo(JsonFunction.acceptMessage(message));
+            }
+        });
         databaseDao = new ResterDao(getActivity());
         databaseDao.open();
 
@@ -46,12 +59,14 @@ public class MenuFragment extends Fragment {
 
     @Override
     public void onResume() {
+        server.start();
         databaseDao.open();
         super.onResume();
     }
 
     @Override
     public void onStop() {
+        server.stop();
         databaseDao.close();
         super.onStop();
     }

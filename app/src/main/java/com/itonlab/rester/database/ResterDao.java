@@ -164,36 +164,6 @@ public class ResterDao {
         database.delete(PictureTable.TABLE_NAME, whereClause, whereArgs);
     }
 
-    public void addPreOrderItem(PreOrderItem preOrderItem) {
-        ContentValues values = preOrderItem.toContentValues();
-        long insertIndex = database.insert(PreOrderTable.TABLE_NAME, null, values);
-
-        if (insertIndex == -1) {
-            Log.d(TAG, "An error occurred on inserting pre_order table.");
-        } else {
-            Log.d(TAG, "insert pre-order successful.");
-        }
-    }
-
-    public void removePreOrderItem(int itemId) {
-        String whereClause = "id=?";
-        String[] whereArgs = {String.valueOf(itemId)};
-        database.delete(PreOrderTable.TABLE_NAME, whereClause, whereArgs);
-    }
-
-    public void updatePreOrder(PreOrderItem preOrderItem) {
-        ContentValues values = new ContentValues();
-        values.put(PreOrderTable.Columns._QUANTITY, preOrderItem.getQuantity());
-        values.put(PreOrderTable.Columns._OPTION, preOrderItem.getOption());
-        String[] whereArgs = {String.valueOf(preOrderItem.getId())};
-
-        int affected = database.update(PreOrderTable.TABLE_NAME, values, "id=?", whereArgs);
-        if (affected == 0) {
-            Log.d(TAG, "[PreOrder]update quantity pre-order id " + preOrderItem.getId()
-                    + " not successful.");
-        }
-    }
-
     public ArrayList<PreOrderItem> getAllPreOrderItem() {
         ArrayList<PreOrderItem> preOrderItems = new ArrayList<PreOrderItem>();
         String sql = "SELECT * FROM pre_order";
@@ -215,9 +185,76 @@ public class ResterDao {
         return preOrderItems;
     }
 
+    public ArrayList<PreOrderItem> getPreOrderItemNotOrdered() {
+        ArrayList<PreOrderItem> preOrderItems = new ArrayList<PreOrderItem>();
+        String sql = "SELECT * FROM pre_order WHERE ordered=0";
+        Cursor cursor = database.rawQuery(sql, null);
+
+        if (cursor.getCount() > 0) {
+            PreOrderItem preOrderItem;
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                preOrderItem = PreOrderItem.newInstance(cursor);
+                preOrderItems.add(preOrderItem);
+                cursor.moveToNext();
+            }
+        }
+        cursor.close();
+
+        Log.d(TAG, "Number of item in pre_order: " + preOrderItems.size());
+
+        return preOrderItems;
+    }
+
+    public void addPreOrderItem(PreOrderItem preOrderItem) {
+        ContentValues values = preOrderItem.toContentValues();
+        long insertIndex = database.insert(PreOrderTable.TABLE_NAME, null, values);
+
+        if (insertIndex == -1) {
+            Log.d(TAG, "An error occurred on inserting pre_order table.");
+        } else {
+            Log.d(TAG, "insert pre-order successful.");
+        }
+    }
+
+    public void removePreOrderItem(int itemId) {
+        String whereClause = "id=?";
+        String[] whereArgs = {String.valueOf(itemId)};
+        database.delete(PreOrderTable.TABLE_NAME, whereClause, whereArgs);
+    }
+
     public void clearPreOrder() {
         //Delete all row out of Pre-Order table
         database.delete(PreOrderTable.TABLE_NAME, null, null);
+    }
+
+    public void updatePreOrder(PreOrderItem preOrderItem) {
+        ContentValues values = new ContentValues();
+        values.put(PreOrderTable.Columns._QUANTITY, preOrderItem.getQuantity());
+        values.put(PreOrderTable.Columns._OPTION, preOrderItem.getOption());
+        String[] whereArgs = {String.valueOf(preOrderItem.getId())};
+
+        int affected = database.update(PreOrderTable.TABLE_NAME, values, "id=?", whereArgs);
+        if (affected == 0) {
+            Log.d(TAG, "[PreOrder]update quantity pre-order id " + preOrderItem.getId()
+                    + " not successful.");
+        }
+    }
+
+    public void updatePreOderToOrdered(ArrayList<PreOrderItem> preOrderItems) {
+        ContentValues values;
+
+        for (PreOrderItem preOrderItem : preOrderItems) {
+            values = new ContentValues();
+            values.put(PreOrderTable.Columns._ORDERED, 1);
+            String[] whereArgs = {String.valueOf(preOrderItem.getId())};
+
+            int affected = database.update(PreOrderTable.TABLE_NAME, values, "id=?", whereArgs);
+            if (affected == 0) {
+                Log.d(TAG, "[PreOrder]update ordered pre-order id " + preOrderItem.getId()
+                        + " not successful.");
+            }
+        }
     }
 
     public int addOrder(Order order) {
@@ -248,7 +285,7 @@ public class ResterDao {
         Cursor cursor = database.rawQuery(sql, null);
 
         if (cursor.getCount() > 0) {
-            Order order = new Order();
+            Order order;
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 order = Order.newInstance(cursor);
@@ -265,7 +302,7 @@ public class ResterDao {
 
     public ArrayList<OrderItemDetail> getOrderDetail(int orderId) {
         ArrayList<OrderItemDetail> orderItemDetails = new ArrayList<OrderItemDetail>();
-        String sql = "SELECT menu_code, name_th, price, quantity" +
+        String sql = "SELECT menu_code, name_th, price, quantity, option" +
                 " FROM order_item INNER JOIN menu ON menu_code = menu.code"
                 + " WHERE order_id = ?";
         String[] whereArgs = {String.valueOf(orderId)};
@@ -276,10 +313,12 @@ public class ResterDao {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 orderItemDetail = new OrderItemDetail();
+                orderItemDetail.setOrdered(true);
                 orderItemDetail.setMenuCode(cursor.getString(0));
                 orderItemDetail.setName(cursor.getString(1));
                 orderItemDetail.setPrice(cursor.getDouble(2));
                 orderItemDetail.setQuantity(cursor.getInt(3));
+                orderItemDetail.setOption(cursor.getString(4));
                 orderItemDetails.add(orderItemDetail);
                 cursor.moveToNext();
             }
@@ -291,10 +330,10 @@ public class ResterDao {
         return orderItemDetails;
     }
 
-    public ArrayList<OrderItemDetail> getSummaryPreOrder() {
+    public ArrayList<OrderItemDetail> getPreOrderDetail() {
         ArrayList<OrderItemDetail> orderItemDetails = new ArrayList<OrderItemDetail>();
-        String sql = "SELECT menu_code, name_th, price, quantity, option, pre_order.id" +
-                " FROM pre_order INNER JOIN menu ON menu_code = menu.code";
+        String sql = "SELECT menu_code, name_th, price, quantity, option, pre_order.id, ordered" +
+                " FROM pre_order INNER JOIN menu ON menu_code = menu.code ORDER BY ordered";
         Cursor cursor = database.rawQuery(sql, null);
 
         if (cursor.getCount() > 0) {
@@ -308,6 +347,7 @@ public class ResterDao {
                 orderItemDetail.setQuantity(cursor.getInt(3));
                 orderItemDetail.setOption(cursor.getString(4));
                 orderItemDetail.setPreOderId(cursor.getInt(5));
+                orderItemDetail.setOrdered(cursor.getInt(6) == 1);// true when ordered equal 1
                 orderItemDetails.add(orderItemDetail);
                 cursor.moveToNext();
             }

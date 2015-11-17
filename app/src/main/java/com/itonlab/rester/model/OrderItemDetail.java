@@ -11,6 +11,7 @@ public class OrderItemDetail {
     private int quantity;
     // รสชาติเพิ่มเติม
     private String option;
+    private boolean ordered;
 
     public int getPreOderId() {
         return preOderId;
@@ -58,5 +59,13 @@ public class OrderItemDetail {
 
     public void setOption(String option) {
         this.option = option;
+    }
+
+    public boolean isOrdered() {
+        return ordered;
+    }
+
+    public void setOrdered(boolean ordered) {
+        this.ordered = ordered;
     }
 }

@@ -20,12 +20,17 @@ import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.MenuTable;
 import com.itonlab.rester.model.Picture;
+import com.itonlab.rester.util.JsonFunction;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import app.akexorcist.simpletcplibrary.SimpleTCPServer;
+
 public class EditDatabaseActivity  extends Activity{
     private static final int PICTURE_REQUEST_CODE = 1;
+    public final int TCP_PORT = 21111;
+    private SimpleTCPServer server;
     private int menuId;
     private ResterDao databaseDao;
     private MenuItem menuItem;
@@ -38,6 +43,14 @@ public class EditDatabaseActivity  extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_database);
+        server = new SimpleTCPServer(TCP_PORT);
+        server.setOnDataReceivedListener(new SimpleTCPServer.OnDataReceivedListener() {
+            @Override
+            public void onDataReceived(String message, String ip) {
+                JsonFunction jsonFunction = new JsonFunction(getApplicationContext());
+                jsonFunction.decideWhatToDo(JsonFunction.acceptMessage(message));
+            }
+        });
 
         databaseDao = new ResterDao(EditDatabaseActivity.this);
         databaseDao.open();
@@ -113,6 +126,7 @@ public class EditDatabaseActivity  extends Activity{
     @Override
     protected void onResume() {
         super.onResume();
+        server.start();
         databaseDao.open();
     }
 
@@ -120,6 +134,12 @@ public class EditDatabaseActivity  extends Activity{
     protected void onPause() {
         super.onPause();
         databaseDao.close();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        server.stop();
     }
 
     private void saveToDatabase(){

@@ -10,19 +10,21 @@ public class PreOrderItem {
     private int quantity;
     //รสชาติเพิ่มเติม
     private String option;
+    private boolean ordered;
 
-    public static PreOrderItem newInstance(Cursor cursor){
+    public static PreOrderItem newInstance(Cursor cursor) {
         PreOrderItem preOrderItem = new PreOrderItem();
         preOrderItem.fromCursor(cursor);
 
         return preOrderItem;
     }
 
-    public void fromCursor(Cursor cursor){
+    public void fromCursor(Cursor cursor) {
         this.id = cursor.getInt((cursor.getColumnIndexOrThrow(PreOrderTable.Columns._ID)));
         this.menuCode = cursor.getString(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._MENU_CODE));
         this.quantity = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._QUANTITY));
         this.option = cursor.getString(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._OPTION));
+        this.ordered = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._ORDERED)) == 1;
     }
 
     public ContentValues toContentValues() {
@@ -30,8 +32,9 @@ public class PreOrderItem {
         values.put(PreOrderTable.Columns._MENU_CODE, menuCode);
         values.put(PreOrderTable.Columns._QUANTITY, quantity);
         values.put(PreOrderTable.Columns._OPTION, option);
+        values.put(PreOrderTable.Columns._ORDERED, (ordered ? 1 : 0));
 
-        return  values;
+        return values;
     }
 
     public int getId() {
@@ -66,4 +69,11 @@ public class PreOrderItem {
         this.option = option;
     }
 
+    public boolean isOrdered() {
+        return ordered;
+    }
+
+    public void setOrdered(boolean ordered) {
+        this.ordered = ordered;
+    }
 }

@@ -10,10 +10,15 @@ import com.itonlab.rester.adapter.OrderItemListAdapter;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.OrderItemDetail;
 import com.itonlab.rester.model.OrderTable;
+import com.itonlab.rester.util.JsonFunction;
 
 import java.util.ArrayList;
 
+import app.akexorcist.simpletcplibrary.SimpleTCPServer;
+
 public class HistoryDetailActivity extends Activity {
+    public final int TCP_PORT = 21111;
+    private SimpleTCPServer server;
     private int orderId;
     private String orderTime;
     private ResterDao databaseDao;
@@ -26,6 +31,14 @@ public class HistoryDetailActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_detail);
+        server = new SimpleTCPServer(TCP_PORT);
+        server.setOnDataReceivedListener(new SimpleTCPServer.OnDataReceivedListener() {
+            @Override
+            public void onDataReceived(String message, String ip) {
+                JsonFunction jsonFunction = new JsonFunction(getApplicationContext());
+                jsonFunction.decideWhatToDo(JsonFunction.acceptMessage(message));
+            }
+        });
 
         databaseDao = new ResterDao(HistoryDetailActivity.this);
         databaseDao.open();
@@ -54,6 +67,7 @@ public class HistoryDetailActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        server.start();
         databaseDao.open();
     }
 
@@ -61,6 +75,12 @@ public class HistoryDetailActivity extends Activity {
     protected void onPause() {
         super.onPause();
         databaseDao.close();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        server.stop();
     }
 
     private double findTotalPrice() {

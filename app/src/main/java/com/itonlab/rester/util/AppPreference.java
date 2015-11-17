@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.itonlab.rester.R;
+import com.itonlab.rester.model.Order;
 
 public class AppPreference {
     private Context mContext;
@@ -63,5 +64,17 @@ public class AppPreference {
 
     public String getAppPassword() {
         return sharedPref.getString("appPassword", "1234");
+    }
+
+    public void saveTakeOrder(Order.Take take) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("takeOrder", take.getValue());
+        editor.apply();
+    }
+
+    public Order.Take getTakeOrder() {
+        int takeValue = sharedPref.getInt("takeOrder", 0);
+        Order.Take take = (takeValue == 0) ? Order.Take.HERE : Order.Take.HOME;
+        return take;
     }
 }

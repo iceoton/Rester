@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -21,7 +20,6 @@ import com.itonlab.rester.adapter.OrderItemListAdapter;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.Order;
-import com.itonlab.rester.model.OrderItem;
 import com.itonlab.rester.model.OrderItemDetail;
 import com.itonlab.rester.model.Picture;
 import com.itonlab.rester.model.PreOrderItem;
@@ -36,39 +34,58 @@ import app.akexorcist.simpletcplibrary.SimpleTCPServer;
 public class SummaryActivity extends Activity {
     public final int TCP_PORT = 21111;
     private SimpleTCPServer server;
-    ArrayList<OrderItemDetail> orderItemDetails;
+    ArrayList<OrderItemDetail> preOrderItemDetails;
     OrderItemListAdapter orderItemListAdapter;
     ResterDao databaseDao;
 
     private Button btnConfirm;
-    private CheckBox chkboxTakeHome;
-    private TextView tvTotalPrice;
+    private TextView tvTake, tvTotalPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary);
         server = new SimpleTCPServer(TCP_PORT);
+        server.setOnDataReceivedListener(new SimpleTCPServer.OnDataReceivedListener() {
+            @Override
+            public void onDataReceived(String message, String ip) {
+                JsonFunction jsonFunction = new JsonFunction(getApplicationContext());
+                jsonFunction.decideWhatToDo(JsonFunction.acceptMessage(message));
+            }
+        });
         databaseDao = new ResterDao(SummaryActivity.this);
         databaseDao.open();
 
-        orderItemDetails = databaseDao.getSummaryPreOrder();
+        preOrderItemDetails = databaseDao.getPreOrderDetail();
 
         ListView lvSummary = (ListView) findViewById(R.id.lvSummary);
-        orderItemListAdapter = new OrderItemListAdapter(SummaryActivity.this, orderItemDetails);
+        orderItemListAdapter = new OrderItemListAdapter(SummaryActivity.this, preOrderItemDetails);
         lvSummary.setAdapter(orderItemListAdapter);
         lvSummary.setOnItemClickListener(summaryOnItemClickListener);
 
-        chkboxTakeHome = (CheckBox) findViewById(R.id.chkboxTakeHome);
+        tvTake = (TextView) findViewById(R.id.textViewTake);
+        String take = "*" + getResources().getString(R.string.text_take_here);
+        if (new AppPreference(SummaryActivity.this).getTakeOrder().equals(Order.Take.HOME)) {
+            take = "*" + getResources().getString(R.string.text_take_home);
+        }
+        tvTake.setText(take);
 
         tvTotalPrice = (TextView) findViewById(R.id.tvTotalPrice);
-        tvTotalPrice.setText(String.valueOf(findTotalPrice(orderItemDetails)));
+        tvTotalPrice.setText(String.valueOf(findTotalPrice(preOrderItemDetails)));
 
         btnConfirm = (Button) findViewById(R.id.btnConfirm);
-        if (orderItemDetails.size() > 0) {
-            btnConfirm.setOnClickListener(confirmOnItemClickListener);
-        } else {
-            btnConfirm.setEnabled(false);
+        btnConfirm.setEnabled(false);
+        if ((preOrderItemDetails.size() > 0)) {
+            if (!preOrderItemDetails.get(0).isOrdered()) {
+                // if first item is not ordered indicate it have items that are not ordered.
+                btnConfirm.setEnabled(true);
+                btnConfirm.setOnClickListener(confirmOnItemClickListener);
+            }
+            if (!preOrderItemDetails.get(preOrderItemDetails.size() - 1).isOrdered()) {
+                // first time to order food
+                showChooseTakeOrderDialog();
+
+            }
         }
 
     }
@@ -102,6 +119,17 @@ public class SummaryActivity extends Activity {
         return totalPrice;
     }
 
+    private double findTotalPriceNotOrdered(ArrayList<OrderItemDetail> orderItemDetails) {
+        double totalPrice = 0;
+        for (OrderItemDetail orderItemDetail : orderItemDetails) {
+            if (!orderItemDetail.isOrdered()) {
+                totalPrice += (orderItemDetail.getPrice() * orderItemDetail.getQuantity());
+            }
+        }
+
+        return totalPrice;
+    }
+
     View.OnClickListener confirmOnItemClickListener = new View.OnClickListener() {
 
         @Override
@@ -113,18 +141,20 @@ public class SummaryActivity extends Activity {
     AdapterView.OnItemClickListener summaryOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            view.isActivated();
             final int itemId = (int) id;
             final int itemPosition = position;
+
             AlertDialog.Builder builder = new AlertDialog.Builder(SummaryActivity.this);
             builder.setMessage("ต้องการลบหรือแก้ไข")
                     .setPositiveButton("ลบ", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             databaseDao.removePreOrderItem(itemId);
-                            orderItemDetails.remove(itemPosition);
+                            preOrderItemDetails.remove(itemPosition);
                             dialog.dismiss();
                             orderItemListAdapter.notifyDataSetChanged();
                             // calculate new total price.
-                            tvTotalPrice.setText(String.valueOf(findTotalPrice(orderItemDetails)));
+                            tvTotalPrice.setText(String.valueOf(findTotalPrice(preOrderItemDetails)));
                         }
                     })
                     .setNegativeButton("แก้ไข", new DialogInterface.OnClickListener() {
@@ -136,13 +166,11 @@ public class SummaryActivity extends Activity {
             // Create the AlertDialog object
             AlertDialog dialog = builder.create();
             dialog.show();
-
-
         }
     };
 
     private void showDialogEditSummary(final int itemPosition) {
-        final OrderItemDetail orderItemDetail = orderItemDetails.get(itemPosition);
+        final OrderItemDetail orderItemDetail = preOrderItemDetails.get(itemPosition);
 
         final Dialog dialogEditSummary = new Dialog(SummaryActivity.this);
         dialogEditSummary.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -187,13 +215,13 @@ public class SummaryActivity extends Activity {
                     databaseDao.updatePreOrder(preOrderItem);
                 }
                 // Remove from item list. However, it will add back later.
-                orderItemDetails.remove(itemPosition);
+                preOrderItemDetails.remove(itemPosition);
                 // Re-add to item list.
-                orderItemDetails.add(itemPosition, orderItemDetail);
+                preOrderItemDetails.add(itemPosition, orderItemDetail);
                 dialogEditSummary.dismiss();
                 orderItemListAdapter.notifyDataSetChanged();
                 // calculate new total price.
-                tvTotalPrice.setText(String.valueOf(findTotalPrice(orderItemDetails)));
+                tvTotalPrice.setText(String.valueOf(findTotalPrice(preOrderItemDetails)));
             }
         });
 
@@ -206,57 +234,62 @@ public class SummaryActivity extends Activity {
     }
 
     private void sendOrderToMaster() {
-        Order.Take take = Order.Take.HERE;
-        if (chkboxTakeHome.isChecked()) {
-            take = Order.Take.HOME;
+        final ArrayList<PreOrderItem> preOrderItemNotOrderedList = databaseDao.getPreOrderItemNotOrdered();
+        if (preOrderItemNotOrderedList.size() > 0) {
+            JsonFunction jsonFunction = new JsonFunction(SummaryActivity.this);
+            String json = jsonFunction.getJSONOrderMessage(preOrderItemNotOrderedList,
+                    findTotalPriceNotOrdered(preOrderItemDetails));
+            Log.d("JSON", json);
+
+            AppPreference appPreference = new AppPreference(SummaryActivity.this);
+            String ip = appPreference.getMasterIP();
+            SimpleTCPClient.send(json, ip, TCP_PORT, new SimpleTCPClient.SendCallback() {
+                public void onSuccess(String tag) {
+                    // change ordered of pre-order to true(1)
+                    databaseDao.updatePreOderToOrdered(preOrderItemNotOrderedList);
+
+                    finish();
+                }
+
+                public void onFailed(String tag) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(SummaryActivity.this).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage(getString(R.string.send_order_fialed));
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+            }, "TAG");
+
         }
-        final ArrayList<PreOrderItem> preOrderItems = databaseDao.getAllPreOrderItem();
-        JsonFunction jsonFunction = new JsonFunction(SummaryActivity.this);
-        String json = jsonFunction.getJSONOrderMessage(preOrderItems, take, findTotalPrice(orderItemDetails));
-        Log.d("JSON", json);
 
-        AppPreference appPreference = new AppPreference(SummaryActivity.this);
-        String ip = appPreference.getMasterIP();
-        final Order.Take finalTake = take;
-        SimpleTCPClient.send(json, ip, TCP_PORT, new SimpleTCPClient.SendCallback() {
-            public void onSuccess(String tag) {
-                //Move data to Order table
-                // 1. add order
-                int totalOrderItem = 0;
-                for (int i = 0; i < preOrderItems.size(); i++) {
-                    totalOrderItem += preOrderItems.get(i).getQuantity();
-                }
-                Order order = new Order();
-                order.setTotalQuantity(totalOrderItem);
-                order.setTake(finalTake);
-                int orderId = databaseDao.addOrder(order);
-                // 2. add order item
-                for (PreOrderItem preOrderItem : preOrderItems) {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setOrderID(orderId);
-                    orderItem.setMenuCode(preOrderItem.getMenuCode());
-                    orderItem.setQuantity(preOrderItem.getQuantity());
-                    databaseDao.addOrderItem(orderItem);
-                }
-                // 3. clear pre-order table
-                databaseDao.clearPreOrder();
-                finish();
-            }
+    }
 
-            public void onFailed(String tag) {
-                AlertDialog alertDialog = new AlertDialog.Builder(SummaryActivity.this).create();
-                alertDialog.setTitle("Alert");
-                alertDialog.setMessage(getString(R.string.send_order_fialed));
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }
-        }, "TAG");
-
+    private void showChooseTakeOrderDialog() {
+        final AppPreference appPreference = new AppPreference(SummaryActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(SummaryActivity.this);
+        builder.setMessage("คุณต้องสั่งอาหารเพื่อทานที่ไหน?")
+                .setPositiveButton("ทานที่ร้าน", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        appPreference.saveTakeOrder(Order.Take.HERE);
+                        String take = "*" + getResources().getString(R.string.text_take_here);
+                        tvTake.setText(take);
+                    }
+                })
+                .setNegativeButton("สั่งกลับบ้าน", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        appPreference.saveTakeOrder(Order.Take.HOME);
+                        String take = "*" + getResources().getString(R.string.text_take_home);
+                        tvTake.setText(take);
+                    }
+                });
+        // Create the AlertDialog object
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 }
