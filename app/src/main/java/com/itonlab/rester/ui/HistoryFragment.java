@@ -43,9 +43,15 @@ public class HistoryFragment extends Fragment{
                 int orderId = (int)id;
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy/HH:mm:ss", Locale.getDefault());
                 String orderTime = dateFormat.format(orders.get(position).getOrderTime());
+                String take = "*" + getActivity().getResources().getString(R.string.text_take_here);
+                if (orders.get(position).getTake().equals(Order.Take.HOME)) {
+                    take = "*" + getActivity().getResources().getString(R.string.text_take_home);
+                }
+
                 Intent intent = new Intent(getActivity(), HistoryDetailActivity.class);
                 intent.putExtra(OrderTable.Columns._ID, orderId);
                 intent.putExtra(OrderTable.Columns._ORDER_TIME, orderTime);
+                intent.putExtra(OrderTable.Columns._TAKE, take);
                 getActivity().startActivity(intent);
             }
         });

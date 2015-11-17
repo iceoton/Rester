@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -19,6 +20,8 @@ import com.itonlab.rester.R;
 import com.itonlab.rester.adapter.OrderItemListAdapter;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
+import com.itonlab.rester.model.Order;
+import com.itonlab.rester.model.OrderItem;
 import com.itonlab.rester.model.OrderItemDetail;
 import com.itonlab.rester.model.Picture;
 import com.itonlab.rester.model.PreOrderItem;
@@ -38,6 +41,7 @@ public class SummaryActivity extends Activity {
     ResterDao databaseDao;
 
     private Button btnConfirm;
+    private CheckBox chkboxTakeHome;
     private TextView tvTotalPrice;
 
     @Override
@@ -51,10 +55,11 @@ public class SummaryActivity extends Activity {
         orderItemDetails = databaseDao.getSummaryPreOrder();
 
         ListView lvSummary = (ListView) findViewById(R.id.lvSummary);
-        orderItemListAdapter = new OrderItemListAdapter(
-                SummaryActivity.this, orderItemDetails, R.layout.summary_list_item);
+        orderItemListAdapter = new OrderItemListAdapter(SummaryActivity.this, orderItemDetails);
         lvSummary.setAdapter(orderItemListAdapter);
         lvSummary.setOnItemClickListener(summaryOnItemClickListener);
+
+        chkboxTakeHome = (CheckBox) findViewById(R.id.chkboxTakeHome);
 
         tvTotalPrice = (TextView) findViewById(R.id.tvTotalPrice);
         tvTotalPrice.setText(String.valueOf(findTotalPrice(orderItemDetails)));
@@ -201,15 +206,39 @@ public class SummaryActivity extends Activity {
     }
 
     private void sendOrderToMaster() {
-        ArrayList<PreOrderItem> preOrderItems = databaseDao.getAllPreOrderItem();
+        Order.Take take = Order.Take.HERE;
+        if (chkboxTakeHome.isChecked()) {
+            take = Order.Take.HOME;
+        }
+        final ArrayList<PreOrderItem> preOrderItems = databaseDao.getAllPreOrderItem();
         JsonFunction jsonFunction = new JsonFunction(SummaryActivity.this);
-        String json = jsonFunction.getJSONOrderMessage(preOrderItems, findTotalPrice(orderItemDetails));
+        String json = jsonFunction.getJSONOrderMessage(preOrderItems, take, findTotalPrice(orderItemDetails));
         Log.d("JSON", json);
 
         AppPreference appPreference = new AppPreference(SummaryActivity.this);
         String ip = appPreference.getMasterIP();
+        final Order.Take finalTake = take;
         SimpleTCPClient.send(json, ip, TCP_PORT, new SimpleTCPClient.SendCallback() {
             public void onSuccess(String tag) {
+                //Move data to Order table
+                // 1. add order
+                int totalOrderItem = 0;
+                for (int i = 0; i < preOrderItems.size(); i++) {
+                    totalOrderItem += preOrderItems.get(i).getQuantity();
+                }
+                Order order = new Order();
+                order.setTotalQuantity(totalOrderItem);
+                order.setTake(finalTake);
+                int orderId = databaseDao.addOrder(order);
+                // 2. add order item
+                for (PreOrderItem preOrderItem : preOrderItems) {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrderID(orderId);
+                    orderItem.setMenuCode(preOrderItem.getMenuCode());
+                    orderItem.setQuantity(preOrderItem.getQuantity());
+                    databaseDao.addOrderItem(orderItem);
+                }
+                // 3. clear pre-order table
                 databaseDao.clearPreOrder();
                 finish();
             }
@@ -217,7 +246,7 @@ public class SummaryActivity extends Activity {
             public void onFailed(String tag) {
                 AlertDialog alertDialog = new AlertDialog.Builder(SummaryActivity.this).create();
                 alertDialog.setTitle("Alert");
-                alertDialog.setMessage("Can't connect to master");
+                alertDialog.setMessage(getString(R.string.send_order_fialed));
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {

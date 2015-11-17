@@ -10,4 +10,7 @@
     <string name="text_master_ip_address">Master IP Address</string>
     <string name="text_btn_confirm_order_food">Confirm Order</string>
     <string name="text_add">Add</string>
+    <string name="send_order_fialed">Can\'t connect to master, please try again.</string>
+    <string name="text_take_here">Take Here</string>
+    <string name="text_take_home">Take Home</string>
 </resources>

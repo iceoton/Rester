@@ -9,4 +9,8 @@
     <string name="text_your_name">ชื่อของเครื่องนี้</string>
     <string name="text_master_ip_address">IP ของเครื่อง Master</string>
     <string name="text_btn_confirm_order_food">สั่งอาหาร</string>
+    <string name="text_add">เพิ่ม</string>
+    <string name="send_order_fialed">ไม่สามารถสั่งอาหารได้ ลองใหม่อีกครั้ง</string>
+    <string name="text_take_here">ทานที่ร้าน</string>
+    <string name="text_take_home">สั่งกลับบ้าน</string>
 </resources>

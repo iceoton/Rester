@@ -216,26 +216,7 @@ public class ResterDao {
     }
 
     public void clearPreOrder() {
-        //Move data to Order table
-        // 1. add order
-        int totalOrderItem = 0;
-        ArrayList<PreOrderItem> preOrderItems = getAllPreOrderItem();
-        for (int i = 0; i < preOrderItems.size(); i++) {
-            totalOrderItem += preOrderItems.get(i).getQuantity();
-        }
-        Order order = new Order();
-        order.setTotalQuantity(totalOrderItem);
-        int orderId = addOrder(order);
-        // 2. add order item
-        for (PreOrderItem preOrderItem : preOrderItems) {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrderID(orderId);
-            orderItem.setMenuCode(preOrderItem.getMenuCode());
-            orderItem.setQuantity(preOrderItem.getQuantity());
-            addOrderItem(orderItem);
-        }
-
-        //Delete it out of Pre-Order table
+        //Delete all row out of Pre-Order table
         database.delete(PreOrderTable.TABLE_NAME, null, null);
     }
 

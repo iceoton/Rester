@@ -13,6 +13,22 @@ public class Order {
     private int totalQuantity;
     private Date orderTime;
     private boolean served;
+    private Take take;
+
+    public enum Take {
+        HERE(0),
+        HOME(1);
+
+        private final int value;
+
+        Take(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return this.value;
+        }
+    }
 
     public static Order newInstance(Cursor cursor) {
         Order order = new Order();
@@ -33,12 +49,20 @@ public class Order {
             e.printStackTrace();
         }
         this.served = cursor.getInt(cursor.getColumnIndexOrThrow(OrderTable.Columns._SERVED)) == 1;
+        int takeValue = cursor.getInt(cursor.getColumnIndexOrThrow(OrderTable.Columns._TAKE));
+        switch (takeValue) {
+            case 1:
+                this.take = Take.HOME;
+                break;
+            default:
+                this.take = Take.HERE;
+        }
     }
 
     public ContentValues toContentValues(){
         ContentValues values = new ContentValues();
         values.put(OrderTable.Columns._TOTAL_QUANTITY, this.totalQuantity);
-
+        values.put(OrderTable.Columns._TAKE, this.take.getValue());
         return values;
     }
 
@@ -72,5 +96,13 @@ public class Order {
 
     public void setServed(boolean served) {
         this.served = served;
+    }
+
+    public Take getTake() {
+        return take;
+    }
+
+    public void setTake(Take take) {
+        this.take = take;
     }
 }

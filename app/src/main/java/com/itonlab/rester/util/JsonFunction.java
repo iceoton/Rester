@@ -2,6 +2,7 @@ package com.itonlab.rester.util;
 
 import android.content.Context;
 
+import com.itonlab.rester.model.Order;
 import com.itonlab.rester.model.PreOrderItem;
 
 import org.json.JSONArray;
@@ -21,7 +22,9 @@ public class JsonFunction {
         this.mContext = context;
     }
 
-    public String getJSONOrderMessage(ArrayList<PreOrderItem> preOrderItems, double totalPrice) {
+    public String getJSONOrderMessage(ArrayList<PreOrderItem> preOrderItems,
+                                      Order.Take take, double totalPrice) {
+
         JSONObject message = new JSONObject();
         try {
             message.put("message_type", "order_ms");
@@ -41,6 +44,7 @@ public class JsonFunction {
             }
             messageBody.put("total_quantity", total_quantity);
             messageBody.put("total_price", totalPrice);
+            messageBody.put("take", take.getValue());
             messageBody.put("order", order);
             // add body to message
             message.put("body", messageBody);

@@ -17,7 +17,7 @@ public class HistoryDetailActivity extends Activity {
     private int orderId;
     private String orderTime;
     private ResterDao databaseDao;
-    private TextView tvOrderId, tvOrderTime, tvTotalPrice;
+    private TextView tvOrderId, tvOrderTime, tvTake, tvTotalPrice;
     private ListView lvOrderItem;
     private OrderItemListAdapter orderItemListAdapter;
     private ArrayList<OrderItemDetail> orderItemDetails;
@@ -43,7 +43,10 @@ public class HistoryDetailActivity extends Activity {
         lvOrderItem = (ListView) findViewById(R.id.lvOrderItem);
         lvOrderItem.setAdapter(orderItemListAdapter);
 
-        tvTotalPrice = (TextView)findViewById(R.id.tvTotalPrice);
+        tvTake = (TextView) findViewById(R.id.textViewTake);
+        tvTake.setText(getIntent().getStringExtra(OrderTable.Columns._TAKE));
+
+        tvTotalPrice = (TextView) findViewById(R.id.tvTotalPrice);
         tvTotalPrice.setText(String.valueOf(findTotalPrice()));
 
     }
@@ -60,7 +63,7 @@ public class HistoryDetailActivity extends Activity {
         databaseDao.close();
     }
 
-    private double findTotalPrice(){
+    private double findTotalPrice() {
         double totalPrice = 0;
         for (OrderItemDetail orderItemDetail : orderItemDetails) {
             totalPrice += (orderItemDetail.getPrice() * orderItemDetail.getQuantity());
