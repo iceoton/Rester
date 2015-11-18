@@ -12,8 +12,7 @@ public class AppPreference {
 
     public AppPreference(Context mContext) {
         this.mContext = mContext;
-        sharedPref = mContext.getSharedPreferences(
-                mContext.getResources().getString(R.string.app_name), Context.MODE_PRIVATE);
+        sharedPref = mContext.getSharedPreferences("AppPref", Context.MODE_PRIVATE);
     }
 
     public void saveMasterIP(String ip) {

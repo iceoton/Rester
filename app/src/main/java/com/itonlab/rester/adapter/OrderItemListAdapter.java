@@ -66,12 +66,12 @@ public class OrderItemListAdapter extends BaseAdapter {
         TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
         tvName.setText(orderItemDetail.getName());
         TextView tvNumber = (TextView) convertView.findViewById(R.id.tvNumber);
-        tvNumber.setText(orderItemDetail.getQuantity() + "x");
+        tvNumber.setText(orderItemDetail.getQuantity() + "รายการx");
         TextView tvPrice = (TextView) convertView.findViewById(R.id.tvPrice);
-        tvPrice.setText(Double.toString(orderItemDetail.getPrice()));
+        tvPrice.setText(Double.toString(orderItemDetail.getPrice()) + "บาท");
         TextView tvTotalPrice = (TextView) convertView.findViewById(R.id.tvTotalPrice);
         double totalPrice = orderItemDetail.getPrice() * orderItemDetail.getQuantity();
-        tvTotalPrice.setText(Double.toString(totalPrice));
+        tvTotalPrice.setText(Double.toString(totalPrice) + "บาท");
 
         TextView tvOption = (TextView) convertView.findViewById(R.id.textViewOption);
         tvOption.setText(orderItemDetail.getOption());

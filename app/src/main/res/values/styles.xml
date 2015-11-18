@@ -27,7 +27,7 @@
     </style>
 
     <style name="text_summary_list_item" parent="@android:style/TextAppearance.Holo.Widget.TextView">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="DialogFood" parent="@android:style/Theme.Dialog">
