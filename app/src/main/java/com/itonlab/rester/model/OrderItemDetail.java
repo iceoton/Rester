@@ -12,6 +12,8 @@ public class OrderItemDetail {
     // รสชาติเพิ่มเติม
     private String option;
     private boolean ordered;
+    private boolean served = false;
+    private PreOrderItem.Status status = PreOrderItem.Status.UNDONE;
 
     public int getPreOderId() {
         return preOderId;
@@ -67,5 +69,21 @@ public class OrderItemDetail {
 
     public void setOrdered(boolean ordered) {
         this.ordered = ordered;
+    }
+
+    public boolean isServed() {
+        return served;
+    }
+
+    public void setServed(boolean served) {
+        this.served = served;
+    }
+
+    public PreOrderItem.Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(PreOrderItem.Status status) {
+        this.status = status;
     }
 }

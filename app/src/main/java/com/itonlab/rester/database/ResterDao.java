@@ -228,15 +228,12 @@ public class ResterDao {
         database.delete(PreOrderTable.TABLE_NAME, null, null);
     }
 
-    public void updatePreOrder(PreOrderItem preOrderItem) {
-        ContentValues values = new ContentValues();
-        values.put(PreOrderTable.Columns._QUANTITY, preOrderItem.getQuantity());
-        values.put(PreOrderTable.Columns._OPTION, preOrderItem.getOption());
-        String[] whereArgs = {String.valueOf(preOrderItem.getId())};
+    public void updatePreOrderByValues(int preOrderId, ContentValues values) {
+        String[] whereArgs = {String.valueOf(preOrderId)};
 
         int affected = database.update(PreOrderTable.TABLE_NAME, values, "id=?", whereArgs);
         if (affected == 0) {
-            Log.d(TAG, "[PreOrder]update quantity pre-order id " + preOrderItem.getId()
+            Log.d(TAG, "[PreOrder]update pre-order id " + preOrderId
                     + " not successful.");
         }
     }
@@ -332,7 +329,7 @@ public class ResterDao {
 
     public ArrayList<OrderItemDetail> getPreOrderDetail() {
         ArrayList<OrderItemDetail> orderItemDetails = new ArrayList<OrderItemDetail>();
-        String sql = "SELECT menu_code, name_th, price, quantity, option, pre_order.id, ordered" +
+        String sql = "SELECT menu_code, name_th, price, quantity, option, pre_order.id, ordered, served, status" +
                 " FROM pre_order INNER JOIN menu ON menu_code = menu.code ORDER BY ordered";
         Cursor cursor = database.rawQuery(sql, null);
 
@@ -348,6 +345,10 @@ public class ResterDao {
                 orderItemDetail.setOption(cursor.getString(4));
                 orderItemDetail.setPreOderId(cursor.getInt(5));
                 orderItemDetail.setOrdered(cursor.getInt(6) == 1);// true when ordered equal 1
+                orderItemDetail.setServed(cursor.getInt(
+                        cursor.getColumnIndexOrThrow(PreOrderTable.Columns._SERVED)) == 1);
+                int statusValue = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._STATUS));
+                orderItemDetail.setStatus((statusValue == 1 ? PreOrderItem.Status.DONE : PreOrderItem.Status.UNDONE));
                 orderItemDetails.add(orderItemDetail);
                 cursor.moveToNext();
             }

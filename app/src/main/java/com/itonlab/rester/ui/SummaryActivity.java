@@ -3,6 +3,7 @@ package com.itonlab.rester.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import com.itonlab.rester.model.Order;
 import com.itonlab.rester.model.OrderItemDetail;
 import com.itonlab.rester.model.Picture;
 import com.itonlab.rester.model.PreOrderItem;
+import com.itonlab.rester.model.PreOrderTable;
 import com.itonlab.rester.util.AppPreference;
 import com.itonlab.rester.util.JsonFunction;
 
@@ -141,7 +143,10 @@ public class SummaryActivity extends Activity {
     AdapterView.OnItemClickListener summaryOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            view.isActivated();
+            if (!view.isEnabled()) {
+                return;
+            }
+
             final int itemId = (int) id;
             final int itemPosition = position;
 
@@ -207,12 +212,11 @@ public class SummaryActivity extends Activity {
                 if (amount > 0) {
                     orderItemDetail.setQuantity(amount);
                     orderItemDetail.setOption(option);
-                    PreOrderItem preOrderItem = new PreOrderItem();
-                    preOrderItem.setId(orderItemDetail.getPreOderId());
-                    preOrderItem.setQuantity(amount);
-                    preOrderItem.setOption(option);
-                    preOrderItem.setMenuCode(orderItemDetail.getMenuCode());
-                    databaseDao.updatePreOrder(preOrderItem);
+                    // update data in database
+                    ContentValues values = new ContentValues();
+                    values.put(PreOrderTable.Columns._QUANTITY, amount);
+                    values.put(PreOrderTable.Columns._OPTION, option);
+                    databaseDao.updatePreOrderByValues(orderItemDetail.getPreOderId(), values);
                 }
                 // Remove from item list. However, it will add back later.
                 preOrderItemDetails.remove(itemPosition);

@@ -1,5 +1,6 @@
 package com.itonlab.rester.util;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
 
@@ -7,6 +8,7 @@ import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.Order;
 import com.itonlab.rester.model.OrderItem;
 import com.itonlab.rester.model.PreOrderItem;
+import com.itonlab.rester.model.PreOrderTable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,6 +104,7 @@ public class JsonFunction {
                 acceptPayConfirm(message);
                 break;
             case ORDER_STATUS_MESSAGE:
+                acceptOrderStatus(message);
                 break;
             default:
                 Log.d("JSON", "Do nothing");
@@ -138,6 +141,29 @@ public class JsonFunction {
             // 3. clear pre-order table
             databaseDao.clearPreOrder();
         }
+        databaseDao.close();
+    }
+
+    private void acceptOrderStatus(Message message) {
+        AppPreference appPreference = new AppPreference(mContext);
+        String masterIP = appPreference.getMasterIP();
+        ResterDao databaseDao = new ResterDao(mContext);
+        databaseDao.open();
+
+        if (masterIP.equals(message.getFromIP())) {
+            //update pre_order with id
+            JSONObject body = message.getJsonBody();
+            ContentValues values = new ContentValues();
+            try {
+                int preOrderId = body.getInt("pre_id");
+                values.put(PreOrderTable.Columns._SERVED, body.getInt("served"));
+                values.put(PreOrderTable.Columns._STATUS, body.getInt("status"));
+                databaseDao.updatePreOrderByValues(preOrderId, values);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         databaseDao.close();
     }
 

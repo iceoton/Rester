@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.itonlab.rester.R;
 import com.itonlab.rester.model.OrderItemDetail;
+import com.itonlab.rester.model.PreOrderItem;
 
 import java.util.ArrayList;
 
@@ -49,18 +50,23 @@ public class OrderItemListAdapter extends BaseAdapter {
 
         LinearLayout layoutOrderItemListItem = (LinearLayout)
                 convertView.findViewById(R.id.layoutOrderItemListItem);
-        Drawable bgDrawable;
+
         if (orderItemDetail.isOrdered()) {
-            bgDrawable = mContext.getResources().getDrawable(R.drawable.bg_stroke_gray);
-            convertView.setClickable(true);
-        } else {
-            bgDrawable = mContext.getResources().getDrawable(R.drawable.bg_stroke_green);
-            convertView.setClickable(false);
+            convertView.setEnabled(false);
         }
-        if (android.os.Build.VERSION.SDK_INT >= 16) {
-            layoutOrderItemListItem.setBackground(bgDrawable);
-        } else {
-            layoutOrderItemListItem.setBackgroundDrawable(bgDrawable);
+
+        if (orderItemDetail.getStatus().equals(PreOrderItem.Status.DONE)) {
+            Drawable bgDrawable = mContext.getResources().getDrawable(R.drawable.bg_stroke_yellow);
+
+            if (orderItemDetail.isServed()) {
+                bgDrawable = mContext.getResources().getDrawable(R.drawable.bg_stroke_red);
+            }
+
+            if (android.os.Build.VERSION.SDK_INT >= 16) {
+                layoutOrderItemListItem.setBackground(bgDrawable);
+            } else {
+                layoutOrderItemListItem.setBackgroundDrawable(bgDrawable);
+            }
         }
 
         TextView tvName = (TextView) convertView.findViewById(R.id.tvName);

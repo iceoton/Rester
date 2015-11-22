@@ -11,6 +11,24 @@ public class PreOrderItem {
     //รสชาติเพิ่มเติม
     private String option;
     private boolean ordered;
+    private boolean served = false;
+    private Status status = Status.UNDONE;
+
+    public enum Status {
+        UNDONE(0),
+        DONE(1);
+
+
+        private int value;
+
+        Status(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 
     public static PreOrderItem newInstance(Cursor cursor) {
         PreOrderItem preOrderItem = new PreOrderItem();
@@ -25,6 +43,9 @@ public class PreOrderItem {
         this.quantity = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._QUANTITY));
         this.option = cursor.getString(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._OPTION));
         this.ordered = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._ORDERED)) == 1;
+        this.served = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._SERVED)) == 1;
+        int statusValue = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._STATUS));
+        this.status = (statusValue == 1) ? Status.DONE : Status.UNDONE;
     }
 
     public ContentValues toContentValues() {
@@ -33,6 +54,8 @@ public class PreOrderItem {
         values.put(PreOrderTable.Columns._QUANTITY, quantity);
         values.put(PreOrderTable.Columns._OPTION, option);
         values.put(PreOrderTable.Columns._ORDERED, (ordered ? 1 : 0));
+        values.put(PreOrderTable.Columns._SERVED, (served ? 1 : 0));
+        values.put(PreOrderTable.Columns._STATUS, status.getValue());
 
         return values;
     }
@@ -75,5 +98,21 @@ public class PreOrderItem {
 
     public void setOrdered(boolean ordered) {
         this.ordered = ordered;
+    }
+
+    public boolean isServed() {
+        return served;
+    }
+
+    public void setServed(boolean served) {
+        this.served = served;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }
