@@ -164,9 +164,9 @@ public class ResterDao {
         database.delete(PictureTable.TABLE_NAME, whereClause, whereArgs);
     }
 
-    public ArrayList<PreOrderItem> getAllPreOrderItem() {
+    public ArrayList<PreOrderItem> getAllPreOrderItemOrdered() {
         ArrayList<PreOrderItem> preOrderItems = new ArrayList<PreOrderItem>();
-        String sql = "SELECT * FROM pre_order";
+        String sql = "SELECT * FROM pre_order WHERE ordered=1";
         Cursor cursor = database.rawQuery(sql, null);
 
         if (cursor.getCount() > 0) {

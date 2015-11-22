@@ -116,9 +116,9 @@ public class JsonFunction {
         String masterIP = appPreference.getMasterIP();
         ResterDao databaseDao = new ResterDao(mContext);
         databaseDao.open();
-        ArrayList<PreOrderItem> preOrderItems = databaseDao.getAllPreOrderItem();
         if (masterIP.equals(message.getFromIP())) {
             //Move data to Order table
+            ArrayList<PreOrderItem> preOrderItems = databaseDao.getAllPreOrderItemOrdered();
             // 1. add order
             int totalOrderItem = 0;
             for (int i = 0; i < preOrderItems.size(); i++) {
