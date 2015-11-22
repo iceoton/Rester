@@ -11,6 +11,7 @@
     <string name="text_btn_confirm_order_food">Confirm Order</string>
     <string name="text_add">Add</string>
     <string name="send_order_fialed">Can\'t connect to master, please try again.</string>
-    <string name="text_take_here">Take Here</string>
-    <string name="text_take_home">Take Home</string>
+    <string name="text_take_here">Eat in</string>
+    <string name="text_take_home">Take-away</string>
+    <string name="text_choose_take">Eat in or take-away?</string>
 </resources>

@@ -276,15 +276,15 @@ public class SummaryActivity extends Activity {
     private void showChooseTakeOrderDialog() {
         final AppPreference appPreference = new AppPreference(SummaryActivity.this);
         AlertDialog.Builder builder = new AlertDialog.Builder(SummaryActivity.this);
-        builder.setMessage("คุณต้องสั่งอาหารเพื่อทานที่ไหน?")
-                .setPositiveButton("ทานที่ร้าน", new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.text_choose_take)
+                .setPositiveButton(R.string.text_take_here, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         appPreference.saveTakeOrder(Order.Take.HERE);
                         String take = "*" + getResources().getString(R.string.text_take_here);
                         tvTake.setText(take);
                     }
                 })
-                .setNegativeButton("สั่งกลับบ้าน", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.text_take_home, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         appPreference.saveTakeOrder(Order.Take.HOME);
                         String take = "*" + getResources().getString(R.string.text_take_home);
@@ -293,6 +293,7 @@ public class SummaryActivity extends Activity {
                 });
         // Create the AlertDialog object
         AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 
