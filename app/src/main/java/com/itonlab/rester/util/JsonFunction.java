@@ -30,7 +30,8 @@ public class JsonFunction {
     public static class Message {
         public enum Type {
             PAY_CONFIRM_MESSAGE("pay_confirm_ms"),
-            ORDER_STATUS_MESSAGE("order_status_ms");
+            ORDER_STATUS_MESSAGE("order_status_ms"),
+            EDIT_ORDER_MESSAGE("edit_order_ms");
 
             Type(String key) {
                 this.jsonKey = key;
@@ -57,6 +58,8 @@ public class JsonFunction {
                     this.messageType = Type.PAY_CONFIRM_MESSAGE;
                 } else if (messageTypeKey.equals(Type.ORDER_STATUS_MESSAGE.getJsonKey())) {
                     this.messageType = Type.ORDER_STATUS_MESSAGE;
+                } else if (messageTypeKey.equals(Type.EDIT_ORDER_MESSAGE.getJsonKey())) {
+                    this.messageType = Type.EDIT_ORDER_MESSAGE;
                 } else {
                     throw new JSONException("Message type key can't accepted.");
                 }
@@ -105,6 +108,9 @@ public class JsonFunction {
                 break;
             case ORDER_STATUS_MESSAGE:
                 acceptOrderStatus(message);
+                break;
+            case EDIT_ORDER_MESSAGE:
+                acceptEditOrder(message);
                 break;
             default:
                 Log.d("JSON", "Do nothing");
@@ -158,6 +164,29 @@ public class JsonFunction {
                 int preOrderId = body.getInt("pre_id");
                 values.put(PreOrderTable.Columns._SERVED, body.getInt("served"));
                 values.put(PreOrderTable.Columns._STATUS, body.getInt("status"));
+                databaseDao.updatePreOrderByValues(preOrderId, values);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        databaseDao.close();
+    }
+
+    private void acceptEditOrder(Message message) {
+        AppPreference appPreference = new AppPreference(mContext);
+        String masterIP = appPreference.getMasterIP();
+        ResterDao databaseDao = new ResterDao(mContext);
+        databaseDao.open();
+
+        if (masterIP.equals(message.getFromIP())) {
+            //update pre_order with id
+            JSONObject body = message.getJsonBody();
+            ContentValues values = new ContentValues();
+            try {
+                int preOrderId = body.getInt("pre_id");
+                values.put(PreOrderTable.Columns._QUANTITY, body.getInt(PreOrderTable.Columns._QUANTITY));
+                values.put(PreOrderTable.Columns._OPTION, body.getString(PreOrderTable.Columns._OPTION));
                 databaseDao.updatePreOrderByValues(preOrderId, values);
             } catch (JSONException e) {
                 e.printStackTrace();
