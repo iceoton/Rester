@@ -14,4 +14,21 @@
     <string name="text_take_here">ทานที่ร้าน</string>
     <string name="text_take_home">สั่งกลับบ้าน</string>
     <string name="text_choose_take">คุณต้องการสั่งอาหารเพื่อทานที่ไหน?</string>
+    <string name="text_price">ราคา</string>
+    <string name="text_baht">บาท</string>
+    <string name="text_quantity">จำนวน</string>
+    <string name="text_item">รายการ</string>
+    <string name="text_cancel">ยกเลิก</string>
+    <string name="text_the_order_summary">สรุปรายการอาหาร</string>
+    <string name="text_total_amount">รวมเป็นจำนวนเงิน</string>
+    <string name="text_no_order">ลำดับ</string>
+    <string name="text_order_time">เวลาที่สั่งอาหาร</string>
+    <string name="taste_optional">รสชาติเพิ่มเติม</string>
+    <string name="text_delete">ลบ</string>
+    <string name="text_edit">แก้ไข</string>
+    <string name="text_delete_or_edit">คุณต้องการลบหรือแก้ไข</string>
+    <string name="order_detail">รายการอาหาร</string>
+    <string name="date_time">วัน/เวลา</string>
+    <string name="receipt">ใบเสร็จที่</string>
+    <string name="press_one_again">กดอีกครั้งเพื่อออกจากแอพ</string>
 </resources>

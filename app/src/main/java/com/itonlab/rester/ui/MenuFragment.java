@@ -21,6 +21,7 @@ import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.Picture;
 import com.itonlab.rester.model.PreOrderItem;
+import com.itonlab.rester.util.AppPreference;
 import com.itonlab.rester.util.JsonFunction;
 
 import java.util.ArrayList;
@@ -81,8 +82,15 @@ public class MenuFragment extends Fragment {
             dialogForOrdering.setContentView(R.layout.dialog_for_ordering);
             // show detail of food
             MenuItem menuItem = menuItems.get(position);
+
             TextView tvName = (TextView) dialogForOrdering.findViewById(R.id.tvName);
-            tvName.setText(menuItem.getNameThai());
+            AppPreference appPreference = new AppPreference(getActivity());
+            if (appPreference.getAppLanguage().equals("th")) {
+                tvName.setText(menuItem.getNameThai());
+            } else {
+                tvName.setText(menuItem.getNameEng());
+            }
+
             TextView tvPrice = (TextView) dialogForOrdering.findViewById(R.id.tvPrice);
             tvPrice.setText(Double.toString(menuItem.getPrice()));
             ImageView ivImgFood = (ImageView) dialogForOrdering.findViewById(R.id.ivImgFood);

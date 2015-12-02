@@ -240,7 +240,7 @@ public class MainActivity extends Activity {
             Log.d("APPFLOW", "Closing app...><");
             super.onBackPressed(); // Exit
         } else {
-            Toast.makeText(getBaseContext(), "Press once again to exit!",
+            Toast.makeText(getBaseContext(), R.string.press_one_again,
                     Toast.LENGTH_SHORT).show();
         }
         back_pressed = System.currentTimeMillis();

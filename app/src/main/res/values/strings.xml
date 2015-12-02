@@ -14,4 +14,21 @@
     <string name="text_take_here">Eat in</string>
     <string name="text_take_home">Take-away</string>
     <string name="text_choose_take">Eat in or take-away?</string>
+    <string name="text_price">price</string>
+    <string name="text_baht"> ฿</string>
+    <string name="text_quantity">quantity</string>
+    <string name="text_item">item</string>
+    <string name="text_cancel">Cancel</string>
+    <string name="text_the_order_summary">The order summary</string>
+    <string name="text_total_amount">Total amount</string>
+    <string name="text_no_order">No.</string>
+    <string name="text_order_time">Order time</string>
+    <string name="taste_optional">taste (optional)</string>
+    <string name="text_delete">Delete</string>
+    <string name="text_edit">Edit</string>
+    <string name="text_delete_or_edit">Do you want to delete or edit.</string>
+    <string name="order_detail">Order detail</string>
+    <string name="date_time">Date/Time</string>
+    <string name="receipt">Receipt</string>
+    <string name="press_one_again">Press once again to exit!</string>
 </resources>

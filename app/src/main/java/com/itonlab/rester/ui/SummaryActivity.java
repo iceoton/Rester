@@ -151,8 +151,8 @@ public class SummaryActivity extends Activity {
             final int itemPosition = position;
 
             AlertDialog.Builder builder = new AlertDialog.Builder(SummaryActivity.this);
-            builder.setMessage("ต้องการลบหรือแก้ไข")
-                    .setPositiveButton("ลบ", new DialogInterface.OnClickListener() {
+            builder.setMessage(R.string.text_delete_or_edit)
+                    .setPositiveButton(R.string.text_delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             databaseDao.removePreOrderItem(itemId);
                             preOrderItemDetails.remove(itemPosition);
@@ -162,7 +162,7 @@ public class SummaryActivity extends Activity {
                             tvTotalPrice.setText(String.valueOf(findTotalPrice(preOrderItemDetails)));
                         }
                     })
-                    .setNegativeButton("แก้ไข", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.text_edit, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
                             showDialogEditSummary(itemPosition);
@@ -185,7 +185,12 @@ public class SummaryActivity extends Activity {
         MenuItem menuItem = databaseDao.getMenuByCode(orderItemDetail.getMenuCode());
 
         TextView tvName = (TextView) dialogEditSummary.findViewById(R.id.tvName);
-        tvName.setText(menuItem.getNameThai());
+        AppPreference appPreference = new AppPreference(SummaryActivity.this);
+        if (appPreference.getAppLanguage().equals("th")) {
+            tvName.setText(menuItem.getNameThai());
+        } else {
+            tvName.setText(menuItem.getNameEng());
+        }
 
         TextView tvPrice = (TextView) dialogEditSummary.findViewById(R.id.tvPrice);
         tvPrice.setText(Double.toString(menuItem.getPrice()));

@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="สรุปรายการอาหาร"
+            android:text="@string/text_the_order_summary"
             android:textSize="16sp" />
 
         <ListView
@@ -50,7 +50,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="รวมเป็นจำนวนเงิน"
+                    android:text="@string/text_total_amount"
                     android:textSize="16sp" />
 
                 <TextView
@@ -65,7 +65,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="บาท"
+                    android:text="@string/text_baht"
                     android:textSize="16sp" />
 
             </LinearLayout>

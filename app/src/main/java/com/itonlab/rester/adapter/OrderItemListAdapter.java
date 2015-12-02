@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.itonlab.rester.R;
 import com.itonlab.rester.model.OrderItemDetail;
 import com.itonlab.rester.model.PreOrderItem;
+import com.itonlab.rester.util.AppPreference;
 
 import java.util.ArrayList;
 
@@ -70,14 +71,22 @@ public class OrderItemListAdapter extends BaseAdapter {
         }
 
         TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
-        tvName.setText(orderItemDetail.getName());
         TextView tvNumber = (TextView) convertView.findViewById(R.id.tvNumber);
-        tvNumber.setText(orderItemDetail.getQuantity() + "รายการx");
         TextView tvPrice = (TextView) convertView.findViewById(R.id.tvPrice);
-        tvPrice.setText(Double.toString(orderItemDetail.getPrice()) + "บาท");
         TextView tvTotalPrice = (TextView) convertView.findViewById(R.id.tvTotalPrice);
         double totalPrice = orderItemDetail.getPrice() * orderItemDetail.getQuantity();
-        tvTotalPrice.setText(Double.toString(totalPrice) + "บาท");
+
+        AppPreference appPreference = new AppPreference(mContext);
+        String menuName;
+        if (appPreference.getAppLanguage().equals("th")) {
+            menuName = orderItemDetail.getNameTH();
+        } else {
+            menuName = orderItemDetail.getNameEN();
+        }
+        tvName.setText(menuName);
+        tvNumber.setText(orderItemDetail.getQuantity() + mContext.getResources().getString(R.string.text_item) + "x");
+        tvPrice.setText(Double.toString(orderItemDetail.getPrice()) + mContext.getResources().getString(R.string.text_baht));
+        tvTotalPrice.setText(Double.toString(totalPrice) + mContext.getResources().getString(R.string.text_baht));
 
         TextView tvOption = (TextView) convertView.findViewById(R.id.textViewOption);
         tvOption.setText(orderItemDetail.getOption());
