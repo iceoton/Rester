@@ -93,12 +93,16 @@ public class SummaryActivity extends Activity {
                                 preOrderItemDetails.remove(i);
                                 preOrderItemDetails.add(i, preOrderItemDetail);
                                 orderItemListAdapter.notifyDataSetChanged();
+                                // re-calculate total price
+                                tvTotalPrice.setText(String.valueOf(findTotalPrice(preOrderItemDetails)));
                                 break;
                             }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+                } else if (jsonMessage.getMessageType().equals(JsonFunction.Message.Type.PAY_CONFIRM_MESSAGE)) {
 
                 }
             }
