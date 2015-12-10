@@ -103,7 +103,15 @@ public class SummaryActivity extends Activity {
                     }
 
                 } else if (jsonMessage.getMessageType().equals(JsonFunction.Message.Type.PAY_CONFIRM_MESSAGE)) {
+                    preOrderItemDetails.clear();
+                    orderItemListAdapter.notifyDataSetChanged();
+                    tvTotalPrice.setText("0.0");
 
+                    final Dialog dialogPaymentSuccessful = new Dialog(SummaryActivity.this);
+                    dialogPaymentSuccessful.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialogPaymentSuccessful.setCancelable(true);
+                    dialogPaymentSuccessful.setContentView(R.layout.dialog_payment_successful);
+                    dialogPaymentSuccessful.show();
                 }
             }
         });
