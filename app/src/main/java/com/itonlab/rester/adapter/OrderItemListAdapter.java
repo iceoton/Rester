@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.itonlab.rester.R;
@@ -49,8 +49,9 @@ public class OrderItemListAdapter extends BaseAdapter {
 
         OrderItemDetail orderItemDetail = orderItemDetails.get(position);
 
-        LinearLayout layoutOrderItemListItem = (LinearLayout)
+        FrameLayout layoutOrderItemListItem = (FrameLayout)
                 convertView.findViewById(R.id.layoutOrderItemListItem);
+        TextView txtOrderItemStatus = (TextView) convertView.findViewById(R.id.txtItemStatus);
 
         if (orderItemDetail.isOrdered()) {
             convertView.setEnabled(false);
@@ -58,11 +59,18 @@ public class OrderItemListAdapter extends BaseAdapter {
 
         if (orderItemDetail.getStatus().equals(PreOrderItem.Status.DONE)) {
             Drawable bgDrawable = mContext.getResources().getDrawable(R.drawable.bg_stroke_yellow);
+            String strStatus = mContext.getResources().getString(R.string.order_item_status_done);
+            int statusColor = mContext.getResources().getColor(R.color.yellow_shadow);
 
             if (orderItemDetail.isServed()) {
                 bgDrawable = mContext.getResources().getDrawable(R.drawable.bg_stroke_red);
+                strStatus = mContext.getResources().getString(R.string.order_item_status_served);
+                statusColor = mContext.getResources().getColor(R.color.red);
             }
 
+            txtOrderItemStatus.setVisibility(View.VISIBLE);
+            txtOrderItemStatus.setText(strStatus);
+            txtOrderItemStatus.setTextColor(statusColor);
             if (android.os.Build.VERSION.SDK_INT >= 16) {
                 layoutOrderItemListItem.setBackground(bgDrawable);
             } else {

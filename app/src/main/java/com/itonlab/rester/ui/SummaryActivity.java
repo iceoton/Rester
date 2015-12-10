@@ -28,6 +28,9 @@ import com.itonlab.rester.model.PreOrderTable;
 import com.itonlab.rester.util.AppPreference;
 import com.itonlab.rester.util.JsonFunction;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import app.akexorcist.simpletcplibrary.SimpleTCPClient;
@@ -52,7 +55,52 @@ public class SummaryActivity extends Activity {
             @Override
             public void onDataReceived(String message, String ip) {
                 JsonFunction jsonFunction = new JsonFunction(getApplicationContext());
-                jsonFunction.decideWhatToDo(JsonFunction.acceptMessage(message));
+                JsonFunction.Message jsonMessage = JsonFunction.acceptMessage(message);
+                jsonFunction.decideWhatToDo(jsonMessage); // It's update data to database.
+                //if message is ORDER_STATUS_MESSAGE let update immediately.
+                if (jsonMessage.getMessageType().equals(JsonFunction.Message.Type.ORDER_STATUS_MESSAGE)) {
+                    JSONObject body = jsonMessage.getJsonBody();
+                    try {
+                        int updateItemId = body.getInt("pre_id");
+                        for (int i = 0; i < preOrderItemDetails.size(); i++) {
+                            OrderItemDetail preOrderItemDetail = preOrderItemDetails.get(i);
+                            if (preOrderItemDetail.getPreOderId() == updateItemId) {
+                                preOrderItemDetail.setServed(body.getInt("served") == 1);
+                                int statusValue = body.getInt("status");
+                                preOrderItemDetail.setStatus(
+                                        (statusValue == 1) ?
+                                                PreOrderItem.Status.DONE : PreOrderItem.Status.UNDONE);
+                                // refresh LisView to display new data
+                                preOrderItemDetails.remove(i);
+                                preOrderItemDetails.add(i, preOrderItemDetail);
+                                orderItemListAdapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else if (jsonMessage.getMessageType().equals(JsonFunction.Message.Type.EDIT_ORDER_MESSAGE)) {
+                    JSONObject body = jsonMessage.getJsonBody();
+                    try {
+                        int editItemId = body.getInt("pre_id");
+                        for (int i = 0; i < preOrderItemDetails.size(); i++) {
+                            OrderItemDetail preOrderItemDetail = preOrderItemDetails.get(i);
+                            if (preOrderItemDetail.getPreOderId() == editItemId) {
+                                preOrderItemDetail.setQuantity(body.getInt(PreOrderTable.Columns._QUANTITY));
+                                preOrderItemDetail.setOption(body.getString(PreOrderTable.Columns._OPTION));
+                                // refresh LisView to display new data
+                                preOrderItemDetails.remove(i);
+                                preOrderItemDetails.add(i, preOrderItemDetail);
+                                orderItemListAdapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }
             }
         });
         databaseDao = new ResterDao(SummaryActivity.this);

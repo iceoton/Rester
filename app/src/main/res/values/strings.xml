@@ -31,4 +31,6 @@
     <string name="date_time">Date/Time</string>
     <string name="receipt">Receipt</string>
     <string name="press_one_again">Press once again to exit!</string>
+    <string name="order_item_status_done">Done</string>
+    <string name="order_item_status_served">Served</string>
 </resources>
