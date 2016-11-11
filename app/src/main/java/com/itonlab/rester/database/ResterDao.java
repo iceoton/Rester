@@ -299,7 +299,7 @@ public class ResterDao {
 
     public ArrayList<OrderItemDetail> getOrderDetail(int orderId) {
         ArrayList<OrderItemDetail> orderItemDetails = new ArrayList<OrderItemDetail>();
-        String sql = "SELECT menu_code, name_th, price, quantity, option" +
+        String sql = "SELECT menu_code, name_th, name_en, price, quantity, option" +
                 " FROM order_item INNER JOIN menu ON menu_code = menu.code"
                 + " WHERE order_id = ?";
         String[] whereArgs = {String.valueOf(orderId)};
@@ -312,10 +312,11 @@ public class ResterDao {
                 orderItemDetail = new OrderItemDetail();
                 orderItemDetail.setOrdered(true);
                 orderItemDetail.setMenuCode(cursor.getString(0));
-                orderItemDetail.setName(cursor.getString(1));
-                orderItemDetail.setPrice(cursor.getDouble(2));
-                orderItemDetail.setQuantity(cursor.getInt(3));
-                orderItemDetail.setOption(cursor.getString(4));
+                orderItemDetail.setNameTH(cursor.getString(1));
+                orderItemDetail.setNameEN(cursor.getString(2));
+                orderItemDetail.setPrice(cursor.getDouble(3));
+                orderItemDetail.setQuantity(cursor.getInt(4));
+                orderItemDetail.setOption(cursor.getString(5));
                 orderItemDetails.add(orderItemDetail);
                 cursor.moveToNext();
             }
@@ -329,7 +330,7 @@ public class ResterDao {
 
     public ArrayList<OrderItemDetail> getPreOrderDetail() {
         ArrayList<OrderItemDetail> orderItemDetails = new ArrayList<OrderItemDetail>();
-        String sql = "SELECT menu_code, name_th, price, quantity, option, pre_order.id, ordered, served, status" +
+        String sql = "SELECT menu_code, name_th, name_en, price, quantity, option, pre_order.id, ordered, served, status" +
                 " FROM pre_order INNER JOIN menu ON menu_code = menu.code ORDER BY ordered";
         Cursor cursor = database.rawQuery(sql, null);
 
@@ -339,12 +340,13 @@ public class ResterDao {
             while (!cursor.isAfterLast()) {
                 orderItemDetail = new OrderItemDetail();
                 orderItemDetail.setMenuCode(cursor.getString(0));
-                orderItemDetail.setName(cursor.getString(1));
-                orderItemDetail.setPrice(cursor.getDouble(2));
-                orderItemDetail.setQuantity(cursor.getInt(3));
-                orderItemDetail.setOption(cursor.getString(4));
-                orderItemDetail.setPreOderId(cursor.getInt(5));
-                orderItemDetail.setOrdered(cursor.getInt(6) == 1);// true when ordered equal 1
+                orderItemDetail.setNameTH(cursor.getString(1));
+                orderItemDetail.setNameEN(cursor.getString(2));
+                orderItemDetail.setPrice(cursor.getDouble(3));
+                orderItemDetail.setQuantity(cursor.getInt(4));
+                orderItemDetail.setOption(cursor.getString(5));
+                orderItemDetail.setPreOderId(cursor.getInt(6));
+                orderItemDetail.setOrdered(cursor.getInt(7) == 1);// true when ordered equal 1
                 orderItemDetail.setServed(cursor.getInt(
                         cursor.getColumnIndexOrThrow(PreOrderTable.Columns._SERVED)) == 1);
                 int statusValue = cursor.getInt(cursor.getColumnIndexOrThrow(PreOrderTable.Columns._STATUS));

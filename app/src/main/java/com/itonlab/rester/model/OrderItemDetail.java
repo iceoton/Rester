@@ -6,7 +6,8 @@ package com.itonlab.rester.model;
 public class OrderItemDetail {
     private int preOderId;
     private String menuCode;
-    private String name;
+    private String nameTH;
+    private String nameEN;
     private double price;
     private int quantity;
     // รสชาติเพิ่มเติม
@@ -31,12 +32,20 @@ public class OrderItemDetail {
         this.menuCode = menuCode;
     }
 
-    public String getName() {
-        return name;
+    public String getNameTH() {
+        return nameTH;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNameTH(String nameTH) {
+        this.nameTH = nameTH;
+    }
+
+    public String getNameEN() {
+        return nameEN;
+    }
+
+    public void setNameEN(String nameEN) {
+        this.nameEN = nameEN;
     }
 
     public double getPrice() {

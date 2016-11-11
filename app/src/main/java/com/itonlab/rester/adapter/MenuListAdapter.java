@@ -14,6 +14,7 @@ import com.itonlab.rester.R;
 import com.itonlab.rester.database.ResterDao;
 import com.itonlab.rester.model.MenuItem;
 import com.itonlab.rester.model.Picture;
+import com.itonlab.rester.util.AppPreference;
 
 import java.util.ArrayList;
 
@@ -68,7 +69,13 @@ public class MenuListAdapter extends BaseAdapter {
         }
 
         MenuItem menuItem = menuItems.get(position);
-        viewHolder.tvName.setText(menuItem.getNameThai());
+        AppPreference appPreference = new AppPreference(mContext);
+        if (appPreference.getAppLanguage().equals("th")) {
+            viewHolder.tvName.setText(menuItem.getNameThai());
+        } else {
+            viewHolder.tvName.setText(menuItem.getNameEng());
+        }
+
         viewHolder.tvPrice.setText(Double.toString(menuItem.getPrice()));
 
 
